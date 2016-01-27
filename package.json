@@ -1,0 +1,37 @@
+{
+  "name": "gist",
+  "version": "0.0.0",
+  "description": "web gis",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/cvandy11/skeleton.git"
+  },
+  "license": "MIT",
+  "author": "GIS Team",
+  "scripts": {
+    "test": "",
+    "build": "rimraf dist && NODE_ENV=production webpack --config ./webpack.prduction.config.js --progress --profile --colors",
+    "start": "babel-node server",
+    "lint": "eslint .",
+    "jscs": "jscs ."
+  },
+  "dependencies": {
+    "jquery": "^2.1.4",
+    "react": "^0.14.2",
+    "react-dom": "^0.14.2"
+  },
+  "devDependencies": {
+    "babel": "^5.x",
+    "babel-core": "^5.x",
+    "babel-loader": "^5.x",
+    "babel-plugin-react-transform": "^1.1.1",
+    "express": "^4.13.3",
+    "extract-text-webpack-plugin": "^0.9.1",
+    "html-webpack-plugin": "^1.6.2",
+    "react-transform-hmr": "^1.0.1",
+    "webpack": "^1.12.3",
+    "webpack-dev-middleware": "^1.2.0",
+    "webpack-hot-middleware": "^2.4.1"
+  }
+}
