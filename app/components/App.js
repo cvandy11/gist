@@ -1,15 +1,15 @@
 import React from 'react';
-var Button = require('./Button.js');
+import LiveMap from './LiveMap.js';
 
 export default class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {test: 'doot'};
     }
+
     render() {
         return (
-            <div>Skeleton
-            <Button />
+            <div>
+                <LiveMap />
             </div>
         )
     }

@@ -5,7 +5,7 @@
   "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/cvandy11/skeleton.git"
+    "url": "https://bitbucket.org/cvandy11/gist.git"
   },
   "license": "MIT",
   "author": "GIS Team",
@@ -17,7 +17,9 @@
     "jscs": "jscs ."
   },
   "dependencies": {
+    "jake": "^8.0.12",
     "jquery": "^2.1.4",
+    "leaflet": "^0.7.7",
     "react": "^0.14.2",
     "react-dom": "^0.14.2"
   },
@@ -28,8 +30,18 @@
     "babel-plugin-react-transform": "^1.1.1",
     "express": "^4.13.3",
     "extract-text-webpack-plugin": "^0.9.1",
+    "history": "^2.0.0-rc2",
     "html-webpack-plugin": "^1.6.2",
+    "jquery": "^2.2.0",
+    "react-bootstrap": "^0.28.2",
+    "react-leaflet": "^0.10.0",
+    "react-redux": "^4.2.0",
+    "react-router": "^2.0.0-rc5",
     "react-transform-hmr": "^1.0.1",
+    "redux": "^3.2.0",
+    "redux-devtools": "^3.0.2",
+    "redux-router": "^1.0.0-beta7",
+    "redux-thunk": "^1.0.3",
     "webpack": "^1.12.3",
     "webpack-dev-middleware": "^1.2.0",
     "webpack-hot-middleware": "^2.4.1"
