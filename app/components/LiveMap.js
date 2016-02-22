@@ -1,6 +1,8 @@
 import React from 'react';
 import {Map, Marker, Popup, TileLayer } from 'react-leaflet';
 
+import {popupClick} from '../actions/popup.js';
+
 class LiveMap extends React.Component {
     constructor(props) {
         super(props);
@@ -13,6 +15,8 @@ class LiveMap extends React.Component {
     }
 
     onMapClick(e) {
+	popupClick(e.latlng);
+
         var old = this.state.popups;
 
         var newPopup = {
@@ -43,8 +47,6 @@ class LiveMap extends React.Component {
                 </Popup>
             );
         });
-
-        console.log(popupList);
 
         return (
             <Map center={position} zoom={13} onClick={this.onMapClick.bind(this)} ref='map'>
