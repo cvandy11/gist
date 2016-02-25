@@ -1,13 +1,14 @@
 var path = require('path');
-var express = require('express');
+var express = require('express.io');
+var http = require('http');
 var webpack = require('webpack');
 var webpackMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
 var config = require('./webpack.config.js');
 
 const isDeveloping = process.env.NODE_ENV !== 'production';
+var app = express().http().io();
 const port = isDeveloping ? process.env.PORT : 80;
-const app = express();
 
 app.use(express.static(__dirname + '/dist'));
 
@@ -32,6 +33,21 @@ if(isDeveloping) {
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'dist/index.html'));
+});
+
+
+//initial connection, contains method for after connection
+app.io.route('ready', function(req) {
+    console.log("someone connected!");
+    req.io.respond();
+});
+
+app.io.route('insert-object', function(req) {
+    req.io.broadcast('object-inserted', req.data);
+});
+
+app.io.route('update-object', function(req) {
+    req.io.broadcast('shout-out', req.data);
 });
 
 app.listen(port, function onStart(err) {

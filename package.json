@@ -12,16 +12,24 @@
   "scripts": {
     "test": "",
     "build": "rimraf dist && NODE_ENV=production webpack --config ./webpack.prduction.config.js --progress --profile --colors",
-    "start": "babel-node server",
+    "start": "nodemon --watch server.js server",
     "lint": "eslint .",
     "jscs": "jscs ."
   },
   "dependencies": {
+    "body-parser": "^1.15.0",
+    "express.io": "^1.1.13",
+    "fs": "0.0.2",
     "jake": "^8.0.12",
     "jquery": "^2.1.4",
+    "json": "^9.0.3",
     "leaflet": "^0.7.7",
     "react": "^0.14.2",
-    "react-dom": "^0.14.2"
+    "react-dom": "^0.14.2",
+    "redux-simple-router": "^2.0.4",
+    "socket.io": "^1.4.5",
+    "socket.io-client": "^1.4.5",
+    "tls": "0.0.1"
   },
   "devDependencies": {
     "babel": "^5.x",
