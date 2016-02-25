@@ -12,7 +12,7 @@
   "scripts": {
     "test": "",
     "build": "rimraf dist && NODE_ENV=production webpack --config ./webpack.prduction.config.js --progress --profile --colors",
-    "start": "babel-node server",
+    "start": "nodemon --watch server.js server",
     "lint": "eslint .",
     "jscs": "jscs ."
   },
@@ -26,7 +26,9 @@
     "leaflet": "^0.7.7",
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
+    "redux-simple-router": "^2.0.4",
     "socket.io": "^1.4.5",
+    "socket.io-client": "^1.4.5",
     "tls": "0.0.1"
   },
   "devDependencies": {

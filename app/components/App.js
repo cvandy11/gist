@@ -1,18 +1,16 @@
 import React from 'react';
-import LiveMap from './LiveMap.js';
-import io from 'socket.io';
+import {connect} from 'react-redux';
 
-export default class App extends React.Component {
+import LiveMap from './LiveMap.js';
+import {initSocket} from '../actions/Connect.js';
+
+import {store} from '../store.js';
+
+class App extends React.Component {
     constructor(props) {
         super(props);
+        store.dispatch(initSocket());
     }
-
-	componentWillMount() {
-		var socket = io.connect('http://webgis.bellinghamcap.org:' + procces.env.PORT) ;
-		socket.on('news', function(data) {
-			console.log(data);
-		});
-	}
 
     render() {
         return (
@@ -22,3 +20,5 @@ export default class App extends React.Component {
         )
     }
 }
+
+export default App;

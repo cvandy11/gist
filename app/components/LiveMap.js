@@ -1,51 +1,24 @@
 import React from 'react';
-import {Map, Marker, Popup, TileLayer } from 'react-leaflet';
+import {Map, Marker, Popup, TileLayer, Circle} from 'react-leaflet';
+import {connect} from 'react-redux';
 
-import {popupClick} from '../actions/popup.js';
+import {insertObject} from '../actions/Connect.js';
 
 class LiveMap extends React.Component {
     constructor(props) {
         super(props);
     }
 
-    componentWillMount() {
-        this.setState({
-            popups: []
-        });
-    }
-
     onMapClick(e) {
-	popupClick(e.latlng);
-
-        var old = this.state.popups;
-
-        var newPopup = {
-            latlng: e.latlng
-        };
-
-        var newPopups;
-
-        if(old.length > 0) {
-            old.push(newPopup);
-            newPopups = old;
-        } else {
-            newPopups=[newPopup];
-        }
-
-        this.setState({
-            popups: newPopups
-        });
+        insertObject({"lat": e.latlng["lat"], "lng": e.latlng["lng"]});
     }
 
     render() {
         const position = [48.73205, -122.48627];
 
-        var popupList = this.state.popups.map(function(popup) {
-            return (
-                <Popup position={popup.latlng}>
-                    <span>You clicked {popup.latlng.toString()}</span>
-                </Popup>
-            );
+        var i = 0;
+        var objectList = this.props.draw.objects.map(function(obj) {
+            return <Circle center={[obj.lat, obj.lng]} radius={200} fillColor='blue' key={i++}></Circle>
         });
 
         return (
@@ -54,10 +27,17 @@ class LiveMap extends React.Component {
                     url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributers'
                 />
-                { popupList }
+                { objectList }
             </Map>
         );
     }
 }
 
-export default LiveMap;
+const mapState = function(state) {
+    return {"draw": state.drawObject};
+}
+
+export default connect(
+    mapState,
+    {insertObject: insertObject}
+)(LiveMap);
