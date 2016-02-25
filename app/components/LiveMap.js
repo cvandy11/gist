@@ -9,6 +9,7 @@ class LiveMap extends React.Component {
         super(props);
     }
 
+    //fired whenever there is a click event on the map
     onMapClick(e) {
         insertObject({"lat": e.latlng["lat"], "lng": e.latlng["lng"]});
     }
@@ -17,6 +18,7 @@ class LiveMap extends React.Component {
         const position = [48.73205, -122.48627];
 
         var i = 0;
+        //building the list of all objects that are in the reducer
         var objectList = this.props.draw.objects.map(function(obj) {
             return <Circle center={[obj.lat, obj.lng]} radius={200} fillColor='blue' key={i++}></Circle>
         });
@@ -33,10 +35,12 @@ class LiveMap extends React.Component {
     }
 }
 
+//puts the data from the reducers into a dictionary
 const mapState = function(state) {
     return {"draw": state.drawObject};
 }
 
+//connects the mapState, functions, and class together
 export default connect(
     mapState,
     {insertObject: insertObject}
