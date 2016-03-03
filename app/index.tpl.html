@@ -6,13 +6,59 @@
         <title>Skeleton</title>
         <meta name="description" content="A webpack + react skeleton">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-            #map1 {
-                height: 800px;
-            }
-        </style>
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <script src="/socket.io/socket.io.js"></script>
+	<style>
+	* {
+		margin: 0;
+		padding: 0;
+	}
+
+	#map1 {
+		width: 100vw;
+		height: 100vh;
+	}
+
+	#layer_panel {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 150px;
+		padding: 3px;
+		overflow: hidden;
+		background: url(http://vignette2.wikia.nocookie.net/beinghuman/images/6/60/70percent-transparent.png);
+	}
+	.info {
+		border-bottom: 1px solid gray;
+	}
+	.info p {
+		text-align: center;
+		color: white;
+	}
+	#info_id {
+		font-size: 28px;
+	}
+	#info_center {
+		font-style: italic;
+		font-size: 12px;
+	}
+	#info_description {
+		
+	}
+	#layers {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		opacity: 1.0;
+	}
+	.list-group-item {
+		margin-left: 5px;
+	}
+	
+
+	</style>
     </head>
     <body>
         <div id="root"></div>
