@@ -11,16 +11,12 @@ var pgp = require("pg-promise")();
 
 var db = pgp("postgress://gist:m@ps&t!l3s@127.0.0.1:5432/gist");
 
-//constants for ports, dev, and the server object
 const isDeveloping = process.env.NODE_ENV !== 'production';
 var app = express().http().io();
 const port = isDeveloping ? process.env.PORT : 80;
 
-//defines the directory the files are located in
 app.use(express.static(__dirname + '/dist'));
 
-//webpack options for hot reloading and other things which are only used
-//when we are in development
 if(isDeveloping) {
     const compiler = webpack(config);
 
@@ -40,13 +36,20 @@ if(isDeveloping) {
     app.use(webpackHotMiddleware(compiler));
 }
 
-//sends the static html file when someone goes to the base of the server
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
 //SOCKET ROUTES
 
+//initial connection, gets given layer data and sends it back
+app.io.route('ready', function(req) {
+    req.io.join(req.data.mission_id);
+    console.log('someone connected to room ' + req.data.mission_id);
+    getLayerObjects(req.data.mission_id, req.data.layer_id).then(function(data) {
+        req.io.respond(data);
+    });
+});
 
 //inserts the object to database, broadcasts it to the room if successful, and returns database insert status
 app.io.route('insert-object', function(req) {
