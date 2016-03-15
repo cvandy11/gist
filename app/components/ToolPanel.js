@@ -7,9 +7,10 @@ import BaseTool from './BaseTool.js';
 
 //Class
 
-class ToolPanel extends React.Componenet {
+class ToolPanel extends React.Component {
 	constructor(props){
 		super(props);
+		console.log();
 	}
 
 	render(){
@@ -18,7 +19,7 @@ class ToolPanel extends React.Componenet {
 			<div id="tool_panel">
 				<BaseTool />
 			</div>
-		)
+		);
 	}
 }
 

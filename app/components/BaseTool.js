@@ -8,19 +8,20 @@ class BaseTool extends React.Component{
 
 	constructor(props){
 		super(props);
+		console.log()
 	}
 	
 	componentWillMount(){
 		this.setState({
 			name: "Base Tool",
 			active: true,
-			bsStyle:"default"
+			bsStyle:"primary"
 		});
 	}
 	
 	render(){
 		return(
-			<Button bsStyle = {this.state.bsStyle} block> {this.state.name} </Button>
+			<Button bsStyle = {this.state.bsStyle} id="base_tool"> {this.state.name} </Button>
 		);
 	}
 }
