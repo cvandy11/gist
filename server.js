@@ -45,7 +45,7 @@ app.get('/', function(req, res) {
 //initial connection, gets given layer data and sends it back
 app.io.route('ready', function(req) {
     req.io.join(req.data.mission_id);
-    console.log('someone connected to room ' + req.data.id);
+    console.log('someone connected to room ' + req.data.mission_id);
     getLayerObjects(req.data.mission_id, req.data.layer_id).then(function(data) {
         req.io.respond(data);
     });
@@ -84,12 +84,13 @@ var getLayerObjects = function(mission_id, layer_id) {
 
 //inserts the object into the database
 var insertObject = function(object) {
-    var promise = db.none("INSERT INTO draw_objects(mission_id, layer_id, type, coordinates, properties) VALUES(${mission_id}, ${layer_id}, ${type}, ${coordinates}, ${properties})", req.data['object']).then(function() {
+    var promise = db.none("INSERT INTO draw_objects(mission_id, layer_id, type, coordinates, properties) VALUES(${mission_id}, ${layer_id}, ${type}, ${coordinates}, ${properties})", object).then(function() {
         return true;
     }).catch(function(error) {
         console.log("ERROR: " + error);
         return false;
     });
+    return promise;
 }
 
 app.listen(port, function onStart(err) {
