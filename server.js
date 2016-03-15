@@ -1,3 +1,5 @@
+'use strict';
+
 var path = require('path');
 var express = require('express.io');
 var http = require('http');
@@ -5,6 +7,9 @@ var webpack = require('webpack');
 var webpackMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
 var config = require('./webpack.config.js');
+var pgp = require("pg-promise")();
+
+var db = pgp("postgress://gist:m@ps&t!l3s@127.0.0.1:5432/gist");
 
 //constants for ports, dev, and the server object
 const isDeveloping = process.env.NODE_ENV !== 'production';
@@ -40,23 +45,51 @@ app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
-
-//fired when someone connects to the server, logs it to the server and
-//responds back. currently no data is sent but eventually we will send back th
-//data that is in the map they are trying to look at
-app.io.route('ready', function(req) {
-    console.log("someone connected!");
-    req.io.respond();
-});
+//SOCKET ROUTES
 
 
-//broadcasts the object whenever someone adds it the map, this will eventually
-//hold the save to database piece
+//inserts the object to database, broadcasts it to the room if successful, and returns database insert status
 app.io.route('insert-object', function(req) {
-    req.io.broadcast('object-inserted', req.data);
+    insertObject(req.data.object).then(function(data) {
+        if(data) {
+            req.io.room(req.data.mission_id).braodcast('object-inserted', req.data.object);
+        }
+        req.io.respond(data);
+    });
 });
 
-//starts the server listening on the supplied port
+//gets all objects with the given mission and layer ids
+app.io.route('get-layer-objects', function(req) {
+    getLayerObjects(req.data.mission_id, req.data.layer_id).then(function(data) {
+        req.io.respond(data);
+    });
+});
+
+
+//DATABASE FUNCTIONS
+
+//gets all objects with the associated mission id and layer id
+var getLayerObjects = function(mission_id, layer_id) {
+    var promise = db.any("SELECT * FROM draw_objects WHERE mission_id = $1 AND layer_id = $2", [mission_id, layer_id]).then(function(data) {
+        return data;
+    }).catch(function(error) {
+        console.log("ERROR: " + error);
+        return false;
+    });
+    return promise;
+}
+
+//inserts the object into the database
+var insertObject = function(object) {
+    var promise = db.none("INSERT INTO draw_objects(mission_id, layer_id, type, coordinates, properties) VALUES(${mission_id}, ${layer_id}, ${type}, ${coordinates}, ${properties})", object).then(function() {
+        return true;
+    }).catch(function(error) {
+        console.log("ERROR: " + error);
+        return false;
+    });
+    return promise;
+}
+
 app.listen(port, function onStart(err) {
   if (err) {
     console.log(err);

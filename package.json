@@ -24,6 +24,7 @@
     "jquery": "^2.1.4",
     "json": "^9.0.3",
     "leaflet": "^0.7.7",
+    "pg-promise": "^3.3.0",
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
     "redux-simple-router": "^2.0.4",

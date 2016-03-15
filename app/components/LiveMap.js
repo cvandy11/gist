@@ -9,18 +9,35 @@ class LiveMap extends React.Component {
         super(props);
     }
 
+    componentWillMount() {
+        this.setState({
+            layer_id: 0,
+            type: "Point",
+            properties: {
+                radius: 200,
+                color: "red"
+            }
+        });
+    }
+
     //fired whenever there is a click event on the map
+    //type, coords, properties passed to server for saving/redrawing
     onMapClick(e) {
-        insertObject({"lat": e.latlng["lat"], "lng": e.latlng["lng"]});
+        insertObject({layer_id: this.state.layer_id, type:this.state.type, coordinates: e.latlng, properties: this.state.properties});
     }
 
     render() {
         const position = [48.73205, -122.48627];
 
-        var i = 0;
         //building the list of all objects that are in the reducer
-        var objectList = this.props.draw.objects.map(function(obj) {
-            return <Circle center={[obj.lat, obj.lng]} radius={200} fillColor='blue' key={i++}></Circle>
+        var objectList = this.props.draw.objects.map(function(obj, i) {
+            switch(obj.type) {
+                case("Point"):
+                    return <Circle key={i} center={obj.coordinates} radius={obj.properties.radius} fillColor={obj.properties.color}></Circle>
+
+                default:
+                    break;
+            }
         });
 
         return (
