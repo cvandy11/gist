@@ -1,5 +1,5 @@
 import React from 'react';
-import {Map, Marker, Popup, TileLayer, Circle} from 'react-leaflet';
+import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup} from 'react-leaflet';
 import {connect} from 'react-redux';
 
 import {insertObject} from '../actions/Connect.js';
@@ -7,6 +7,18 @@ import {insertObject} from '../actions/Connect.js';
 class LiveMap extends React.Component {
     constructor(props) {
         super(props);
+    }
+
+    componentWillMount() {
+        this.setState({
+            rendered: false
+        });
+    }
+
+    componentWillReceiveProps() {
+        this.setState({
+            rendered: true
+        });
     }
 
     //fired whenever there is a click event on the map
@@ -18,16 +30,45 @@ class LiveMap extends React.Component {
     render() {
         const position = [48.73205, -122.48627];
 
+        var layerGroups = {
+            "0" : [],
+            "1" : [],
+            "2" : [],
+            "3" : []
+        }
+
         //building the list of all objects that are in the reducer
-        var objectList = this.props.draw.objects.map(function(obj, i) {
+        this.props.draw.objects.map(function(obj, i) {
             switch(obj.type) {
                 case("Point"):
-                    return <Circle key={i} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color}></Circle>
+                    layerGroups[obj.layer_id].push(<Circle key={i} className="" center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color}></Circle>);
+                    break;
 
                 default:
                     break;
             }
         }.bind(this));
+
+        var layers = Object.keys(layerGroups).map(function(layer_id) {
+            return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{layerGroups[layer_id]}</FeatureGroup>;
+        }.bind(this));
+
+        if(this.state.rendered) {
+            Object.keys(layerGroups).map(function(id) {
+                var leaf = this.refs.map.getLeafletElement();
+                var layer = this.refs["layer-"+id].getLeafletElement();
+
+                if(this.props.controls.visible_layers.indexOf(id) > -1) {
+                    if(!leaf.hasLayer(layer)) {
+                        leaf.addLayer(layer);
+                    }
+                } else {
+                    if(leaf.hasLayer(layer))  {
+                        leaf.removeLayer(layer);
+                    }
+                }
+            }.bind(this));
+        }
 
         return (
             <Map center={position} zoom={13} onClick={this.onMapClick.bind(this)} ref='map'>
@@ -35,7 +76,7 @@ class LiveMap extends React.Component {
                     url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributers'
                 />
-                { objectList }
+                { layers }
             </Map>
         );
     }
