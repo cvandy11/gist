@@ -6,12 +6,14 @@ import thunk from 'redux-thunk';
 import React from 'react';
 
 import objectReducer from './reducers/object.js';
+import controlsReducer from './reducers/controls.js';
 
 import App from './components/App.js';
 
 //hooks up the routing and draw object reducer into one object
 const reducer = combineReducers({
     drawObject: objectReducer,
+    controls: controlsReducer,
     routing: routeReducer
 });
 

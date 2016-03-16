@@ -9,21 +9,10 @@ class LiveMap extends React.Component {
         super(props);
     }
 
-    componentWillMount() {
-        this.setState({
-            layer_id: 0,
-            type: "Point",
-            properties: {
-                radius: 200,
-                color: "red"
-            }
-        });
-    }
-
     //fired whenever there is a click event on the map
     //type, coords, properties passed to server for saving/redrawing
     onMapClick(e) {
-        insertObject({layer_id: this.state.layer_id, type:this.state.type, coordinates: e.latlng, properties: this.state.properties});
+        insertObject({layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: e.latlng, properties: this.props.controls.tool.properties});
     }
 
     render() {
@@ -33,12 +22,12 @@ class LiveMap extends React.Component {
         var objectList = this.props.draw.objects.map(function(obj, i) {
             switch(obj.type) {
                 case("Point"):
-                    return <Circle key={i} center={obj.coordinates} radius={obj.properties.radius} fillColor={obj.properties.color}></Circle>
+                    return <Circle key={i} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color}></Circle>
 
                 default:
                     break;
             }
-        });
+        }.bind(this));
 
         return (
             <Map center={position} zoom={13} onClick={this.onMapClick.bind(this)} ref='map'>
@@ -54,7 +43,7 @@ class LiveMap extends React.Component {
 
 //puts the data from the reducers into a dictionary
 const mapState = function(state) {
-    return {"draw": state.drawObject};
+    return {"draw": state.drawObject, "controls": state.controls};
 }
 
 //connects the mapState, functions, and class together

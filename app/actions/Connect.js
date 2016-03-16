@@ -44,9 +44,19 @@ var insertObject = function(object) {
 }
 
 //function to select layer and display it
-var toggleLayer = function(layer_id) {
+var getLayerObjects = function(layer_id) {
+    socket.emit('get-layer-objects', {mission_id: mission_id, layer_id: layer_id}, function(data) {
+        if(data) {
+            for(let object of data) {
+                store.dispatch({
+                    type: OBJECT_INSERTED,
+                    object: object
+                });
+            }
+        }
+    });
 }
 
 export {OBJECT_INSERTED};
 
-export {initSocket, insertObject};
+export {initSocket, insertObject, getLayerObjects};
