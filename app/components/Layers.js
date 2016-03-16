@@ -46,6 +46,7 @@ class Layers extends React.Component {
 				}
 			}
 		});
+
 	}
 
     toggleLayerVisibility(id) {
@@ -79,6 +80,10 @@ class Layers extends React.Component {
             });
 
             selectLayer(id);
+
+            if(!oldLayers[id].displayed) {
+                this.toggleLayerVisibility(id).bind(this)();
+            }
         }
     }
 

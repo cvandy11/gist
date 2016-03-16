@@ -36,7 +36,7 @@ var initSocket = function() {
 //object must be an object with a type, coordinates, and optional properties for styling the object
 var insertObject = function(object) {
     object['mission_id'] = mission_id;
-    socket.emit('insert-object', {"object": object});
+    socket.emit('insert-object', {"mission_id": mission_id,"object": object});
     store.dispatch({
         type: OBJECT_INSERTED,
         object: object

@@ -13,9 +13,9 @@ var db = pgp("postgress://gist:m@ps&t!l3s@127.0.0.1:5432/gist");
 
 const isDeveloping = process.env.NODE_ENV !== 'production';
 var app = express().http().io();
-const port = isDeveloping ? process.env.PORT : 80;
+const port = isDeveloping ? process.env.PORT : 3000;
 
-app.use(express.static(__dirname + '/build'));
+app.use(express.static(__dirname + '/dist'));
 
 
 if(isDeveloping) {
@@ -38,7 +38,7 @@ if(isDeveloping) {
 }
 
 app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, 'build/index.html'));
+  res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
 //SOCKET ROUTES
@@ -56,7 +56,7 @@ app.io.route('ready', function(req) {
 app.io.route('insert-object', function(req) {
     insertObject(req.data.object).then(function(data) {
         if(data) {
-            req.io.room(req.data.mission_id).braodcast('object-inserted', req.data.object);
+            req.io.room(req.data.mission_id).broadcast('object-inserted', req.data.object);
         }
         req.io.respond(data);
     });

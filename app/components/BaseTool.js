@@ -10,7 +10,7 @@ class BaseTool extends React.Component{
 		super(props);
 		console.log()
 	}
-	
+
 	componentWillMount(){
 		this.setState({
 			name: "Base Tool",
@@ -19,11 +19,11 @@ class BaseTool extends React.Component{
 			glyph: "glyphicon glyphicon-fire"
 		});
 	}
-	
+
 	render(){
 		return(
 			<OverlayTrigger trigger="click" placement="right" overlay={
-				<Popover title="Example Popover">
+				<Popover title="Example Popover" id="1">
 					<strong>This Does Nothing Yet </strong>
 				</Popover>
 			}>

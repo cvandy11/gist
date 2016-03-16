@@ -26,6 +26,7 @@
     "leaflet": "^0.7.7",
     "pg-promise": "^3.3.0",
     "react": "^0.14.2",
+    "react-color": "^2.0.0",
     "react-dom": "^0.14.2",
     "redux-simple-router": "^2.0.4",
     "socket.io": "^1.4.5",
