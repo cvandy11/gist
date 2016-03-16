@@ -11,7 +11,7 @@
   "author": "GIS Team",
   "scripts": {
     "test": "",
-    "build": "rimraf dist && NODE_ENV=production webpack --config ./webpack.prduction.config.js --progress --profile --colors",
+    "build": "rimraf dist && NODE_ENV=production webpack -p --config ./webpack.production.config.js --progress --profile --colors && pm2 restart demoServer",
     "start": "nodemon --watch server.js server",
     "lint": "eslint .",
     "jscs": "jscs ."

@@ -3,39 +3,14 @@
 var path = require('path');
 var express = require('express.io');
 var http = require('http');
-var webpack = require('webpack');
-var webpackMiddleware = require('webpack-dev-middleware');
-var webpackHotMiddleware = require('webpack-hot-middleware');
-var config = require('./webpack.config.js');
 var pgp = require("pg-promise")();
 
 var db = pgp("postgress://gist:m@ps&t!l3s@127.0.0.1:5432/gist");
 
-const isDeveloping = process.env.NODE_ENV !== 'production';
 var app = express().http().io();
-const port = isDeveloping ? process.env.PORT : 80;
+const port = 3000;
 
 app.use(express.static(__dirname + '/build'));
-
-
-if(isDeveloping) {
-    const compiler = webpack(config);
-
-    app.use(webpackMiddleware(compiler, {
-        publicPath: config.output.publicPath,
-        contentBase: 'src',
-        stats: {
-            colors: true,
-            hash: false,
-            timings: true,
-            chunks: false,
-            chunkModules: false,
-            modules: false
-        }
-    }));
-
-    app.use(webpackHotMiddleware(compiler));
-}
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'build/index.html'));
