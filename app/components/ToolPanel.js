@@ -16,9 +16,9 @@ class ToolPanel extends React.Component {
 
 	render(){
 		//still needs to have things inside of it
+        //add back ToolOptions later
 		return(
 			<div id="tool_panel">
-                <ToolOptions />
 				<BaseTool />
 			</div>
 		);

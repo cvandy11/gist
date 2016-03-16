@@ -1,7 +1,7 @@
 import React from 'react';
 import ColorPicker from 'react-color';
 
-import {Button} from 'react-bootstrap';
+import {Button, Grid, Row, Col} from 'react-bootstrap';
 
 import {updateToolProperties} from '../actions/Controls.js';
 
@@ -39,13 +39,23 @@ class ToolOptions extends React.Component {
     }
 
     render() {
-        return null;
-        //currently not working as hoped
-        return <div className="info">
-                <Button onClick={this.handleClick}>Pick Color</Button>
-                <ColorPicker type="sketch" display={false} />
-                <span>50</span><input onChange={this.updateRange} type="range" min={50} max={1000} defaultValue={200} /><label>1000</label>
-                <output name="size">{this.state.range}</output>
+        var color = <div><ColorPicker type="sketch" display={false} /><Button onClick={this.handleClick}>Pick Color</Button></div>;
+        return <div className="info" style={{display: "inline-block"}}>
+                <Grid style={{width: "100%"}}>
+                    <Row>
+                        <p>Radius</p>
+                    </Row>
+
+                    <Row>
+                        <input onChange={this.updateRange} type="range" min={50} max={1000} defaultValue={200} />
+                    </Row>
+
+                    <Row>
+                        <Col xs={6} md={4}><p>50</p></Col>
+                        <Col xs={6} md={4}><output name="size"><p>{this.state.range}</p></output></Col>
+                        <Col xs={6} md={4}><p>1000</p></Col>
+                    </Row>
+                </Grid>
             </div>
     }
 }
