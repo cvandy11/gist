@@ -3,7 +3,11 @@ import {connect} from 'react-redux';
 
 import LiveMap from './LiveMap.js';
 import LayerPanel from './LayerPanel.js';
-import ToolPanel from './ToolPanel.js';
+//import ToolPanel from './ToolPanel.js';
+import BaseTool from './BaseTool.js';
+import Layers from './Layers.js';
+import Info from './Info.js';
+import GenericPanel from './GenericPanel.js';
 
 import {initSocket} from '../actions/Connect.js';
 
@@ -19,7 +23,9 @@ class App extends React.Component {
 		return (
 			<div>
 				<LiveMap />
-                <ToolPanel />
+		                <GenericPanel align="left">
+					<BaseTool />
+				</GenericPanel>
 				<LayerPanel />
 			</div>
 		)

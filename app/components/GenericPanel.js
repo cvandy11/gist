@@ -18,7 +18,7 @@ class GenericPanel extends React.Component{
 	render(){
 		//returns a div of Generic panel aligned 
 		return(
-			<div class="GenericPanel" {this.align}="0">
+			<div className="GenericPanel" {this.align}="0">
 			</div>
 
 		);
