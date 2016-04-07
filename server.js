@@ -57,8 +57,10 @@ app.io.route('insert-object', function(req) {
     insertObject(req.data.object).then(function(data) {
         if(data) {
             req.io.room(req.data.mission_id).broadcast('object-inserted', req.data.object);
+            req.io.respond(req.data.object);
+        } else {
+            req.io.respond(data);
         }
-        req.io.respond(data);
     });
 });
 

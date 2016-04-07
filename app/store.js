@@ -7,6 +7,7 @@ import React from 'react';
 
 import objectReducer from './reducers/object.js';
 import controlsReducer from './reducers/controls.js';
+import errorReducer from './reducers/error.js';
 
 import App from './components/App.js';
 
@@ -14,6 +15,7 @@ import App from './components/App.js';
 const reducer = combineReducers({
     drawObject: objectReducer,
     controls: controlsReducer,
+    errors: errorReducer,
     routing: routeReducer
 });
 

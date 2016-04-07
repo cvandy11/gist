@@ -1,5 +1,5 @@
-const CONNECTING = "CONNECTING";
 const OBJECT_INSERTED = "OBJECT_INSERTED";
+const ERROR = "ERROR";
 
 import {store} from '../store.js';
 
@@ -36,10 +36,19 @@ var initSocket = function() {
 //object must be an object with a type, coordinates, and optional properties for styling the object
 var insertObject = function(object) {
     object['mission_id'] = mission_id;
-    socket.emit('insert-object', {"mission_id": mission_id,"object": object});
-    store.dispatch({
-        type: OBJECT_INSERTED,
-        object: object
+    socket.emit('insert-object', {"mission_id": mission_id,"object": object}, function(data) {
+        if(!data) {
+            //database error
+            store.dispatch({
+                type: ERROR,
+                message: "There was a problem inserting into the database"
+            });
+        } else {
+            store.dispatch({
+                type: OBJECT_INSERTED,
+                object: data
+            });
+        }
     });
 }
 
@@ -57,6 +66,6 @@ var getLayerObjects = function(layer_id) {
     });
 }
 
-export {OBJECT_INSERTED};
+export {OBJECT_INSERTED, ERROR};
 
 export {initSocket, insertObject, getLayerObjects};
