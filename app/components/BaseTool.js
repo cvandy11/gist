@@ -9,6 +9,7 @@ class BaseTool extends React.Component{
 	constructor(props){
 		super(props);
 		console.log()
+		this.TempName = props.Name;
 	}
 
 	componentWillMount(){
@@ -27,8 +28,8 @@ class BaseTool extends React.Component{
 					<strong>This Does Nothing Yet </strong>
 				</Popover>
 			}>
-				<Button bsStyle = {this.state.bsStyle} id="base_tool">
-					<span className={this.state.glyph}></span> {this.state.name}
+				<Button bsStyle = {this.state.bsStyle} id="base_tool" block>
+					<span className={this.state.glyph}></span> {this.TempName} 
 				 </Button>
 			</OverlayTrigger>
 		);

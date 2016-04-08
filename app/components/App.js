@@ -24,9 +24,15 @@ class App extends React.Component {
 			<div>
 				<LiveMap />
 		                <GenericPanel align="left">
-					<BaseTool />
+					<BaseTool Name="Base Tool" />
+					<BaseTool Name="Hello World" />
+					<BaseTool Name="THIS IS A REALLY LONG BUTTON" />
+					<BaseTool Name="Short" />
 				</GenericPanel>
-				<LayerPanel />
+				<GenericPanel align="right">
+					<Info />
+					<Layers />
+				</GenericPanel>
 			</div>
 		)
 	}
