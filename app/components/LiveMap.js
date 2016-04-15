@@ -29,10 +29,10 @@ class LiveMap extends React.Component {
 
     render() {
         const position = [48.73205, -122.48627];
-	/*const bounds =[
-		[-100,-190],
-		[100,190]
-		];*/ 
+	const bounds =[
+		[-120,-220],
+		[120,220]
+		];
 
         var layerGroups = {
             "0" : [],
@@ -75,10 +75,11 @@ class LiveMap extends React.Component {
         }
 
         return (
-            <Map center={position} worldCopyJump={true} zoom={13} zoomControl={false}  onClick={this.onMapClick.bind(this)} ref='map'>
+            <Map center={position} worldCopyJump={false} zoom={13} minZoom={2} maxBounds={bounds} zoomControl={false}  onClick={this.onMapClick.bind(this)} ref='map'>
                 <TileLayer
                     url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributers'
+		    noWrap={true}
                 />
                 { layers }
             </Map>
