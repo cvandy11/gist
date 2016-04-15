@@ -39,6 +39,7 @@ var insertObject = function(object) {
     socket.emit('insert-object', {"mission_id": mission_id,"object": object}, function(data) {
         if(!data) {
             //database error
+            console.log("error!");
             store.dispatch({
                 type: ERROR,
                 message: "There was a problem inserting into the database"

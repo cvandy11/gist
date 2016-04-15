@@ -13,7 +13,8 @@ export default function errorReducer(previousControlState, action) {
 
     switch(action.type) {
         case ERROR:
-            newState.type = "error";
+            console.log("error store");
+            newState.type = "Error";
             newState.message = action.message;
             break;
         default:
