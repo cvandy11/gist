@@ -75,7 +75,7 @@ class LiveMap extends React.Component {
         }
 
         return (
-            <Map center={position} worldCopyJump={true} zoom={13} onClick={this.onMapClick.bind(this)} ref='map'>
+            <Map center={position} worldCopyJump={true} zoom={13} zoomControl={false}  onClick={this.onMapClick.bind(this)} ref='map'>
                 <TileLayer
                     url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributers'
