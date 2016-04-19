@@ -4,10 +4,8 @@ import {Alert} from 'react-bootstrap';
 
 import LiveMap from './LiveMap.js';
 import LayerPanel from './LayerPanel.js';
+import ToolPanel from './ToolPanel.js';
 //import ToolPanel from './ToolPanel.js';
-import BaseTool from './BaseTool.js';
-import Layers from './Layers.js';
-import Info from './Info.js';
 import GenericPanel from './GenericPanel.js';
 
 import {initSocket} from '../actions/Connect.js';
@@ -31,14 +29,10 @@ class App extends React.Component {
                 {notification}
                 <LiveMap />
 		        <GenericPanel align="left">
-					<BaseTool Name="Base Tool" />
-					<BaseTool Name="Hello World" />
-					<BaseTool Name="THIS IS A REALLY LONG BUTTON" />
-					<BaseTool Name="Short" />
+                    <ToolPanel />
 				</GenericPanel>
 				<GenericPanel align="right">
-					<Info />
-					<Layers />
+					<LayerPanel />
 				</GenericPanel>
             </div>
         )
