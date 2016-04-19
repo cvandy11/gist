@@ -1,7 +1,7 @@
 import React from "react";
 
-import {ListGroup, ListGroupItem, Input} from "react-bootstrap";
-import {insertObject} from '../actions/Connect.js';
+import {Button} from "react-bootstrap";
+import {recenterMap} from "../actions/Controls.js";
 
 class Info extends React.Component {
 	constructor(props) {
@@ -9,18 +9,18 @@ class Info extends React.Component {
 	}
 
 	componentWillMount() {
-		this.setState({ 
+		this.setState({
 			identifier: "MIS_001",
 			description: "A test mission",
 			center_point: "48.7502 N, 122.4750 W"
 		});
-	} 
+	}
 
 	render() {
 		return 	<div className="info">
 				<p><span id="info_id">{this.state.identifier}</span><br />
-				<span id="info_center">{this.state.center_point}</span><br />
-				<span id="info_description">{this.state.description}</span></p>
+				<span id="info_description">{this.state.description}</span>
+				<Button bsStyle="primary" bsSize="xsmall" onClick={recenterMap()}>{this.state.center_point}</Button></p>
 			</div>
 	}
 }

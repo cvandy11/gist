@@ -53,6 +53,7 @@ class LiveMap extends React.Component {
             return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{layerGroups[layer_id]}</FeatureGroup>;
         }.bind(this));
 
+/*
         if(this.state.rendered) {
             Object.keys(layerGroups).map(function(id) {
                 var leaf = this.refs.map.getLeafletElement();
@@ -69,12 +70,14 @@ class LiveMap extends React.Component {
                 }
             }.bind(this));
         }
+*/
 
         return (
-            <Map center={position} zoom={13} onClick={this.onMapClick.bind(this)} ref='map'>
+            <Map center={position} zoom={this.props.controls.mapData.maxZoom} onClick={this.onMapClick.bind(this)} ref='map'>
                 <TileLayer
-                    url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-                    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributers'
+                    maxZoom={this.props.controls.mapData.maxZoom}
+                    url={this.props.controls.mapData.url}
+                    attribution='&copy; <a href="https://skyvector.com/">SkyVector</a> | &copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
                 />
                 { layers }
             </Map>

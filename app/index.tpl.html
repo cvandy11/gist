@@ -17,8 +17,11 @@
 	}
 
 	#map1 {
-		width: 100vw;
-		height: 100vh;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
 	}
     #tool_panel {
         position: absolute;
@@ -42,6 +45,10 @@
         left: 150px;
     }
 
+    div.leaflet-bottom.leaflet-right {
+	    right: 150px;
+    }
+
 	#layer_panel {
 		position: absolute;
 		top: 0;
@@ -58,29 +65,28 @@
 	.info p {
 		text-align: center;
 		color: white;
+        line-height: 24px;
+        margin: 0 0 6px 0;
 	}
 	#info_id {
 		font-size: 28px;
 	}
-	#info_center {
-		font-style: italic;
-		font-size: 12px;
-	}
 	#info_description {
 
 	}
-	#layers {
-		position: absolute;
-		bottom: 0;
-        width: 95%;
-		opacity: 1.0;
-	}
+    #info_center {
+
+    }
+    #layers {
+
+    }
+    #baseLayers {
+        position: absolute;
+        bottom: 0;
+    }
 	.list-group-item {
-        margin: auto;
-        padding: 5px 5px;
-        white-space: nowrap;
-        overflow: hidden;
-	}
+
+    }
 
     .layer-visibile-button {
         float: left;
@@ -89,8 +95,9 @@
     .active-layer-clickable {
         display: inline-block;
         height: 100%;
-        width: 100%;
+        width: 85px;
         margin: 5px 5px;
+        overflow: hidden;
     }
 
     .hidden {
