@@ -2,6 +2,8 @@ const LAYER_SELECTED = "LAYER_SELECTED";
 const LAYER_TOGGLED = "LAYER_TOGGLED";
 const TOOL_SELECTED = "TOOL_SELECTED";
 const TOOL_PROPERTIES_UPDATED = "TOOL_PROPERTIES_UPDATED";
+const BASE_CHANGE = "BASE_CHANGE";
+const MAP_RECENTER = "MAP_RECENTER";
 
 import {store} from '../store.js';
 
@@ -33,7 +35,22 @@ var updateToolProperties = function(properties) {
     });
 }
 
+var changeBase = function(newBase) {
+    console.log(newBase);
 
-export{LAYER_SELECTED, LAYER_TOGGLED, TOOL_SELECTED, TOOL_PROPERTIES_UPDATED};
+    store.dispatch({
+       type: BASE_CHANGE,
+       properties: newBase
+    });
+}
 
-export {toggleLayer, selectLayer, selectTool, updateToolProperties};
+var recenterMap = function(properties) {
+    store.dispatch({
+        type: MAP_RECENTER,
+        properties: properties
+    });
+}
+
+export{LAYER_SELECTED, LAYER_TOGGLED, TOOL_SELECTED, TOOL_PROPERTIES_UPDATED, BASE_CHANGE, MAP_RECENTER};
+
+export {toggleLayer, selectLayer, selectTool, updateToolProperties, changeBase, recenterMap};

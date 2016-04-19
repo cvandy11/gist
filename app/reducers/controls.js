@@ -1,4 +1,4 @@
-import {LAYER_SELECTED, LAYER_TOGGLED, TOOL_SELECTED, TOOL_PROPERTIES_UPDATED} from '../actions/Controls.js';
+import {LAYER_SELECTED, LAYER_TOGGLED, TOOL_SELECTED, TOOL_PROPERTIES_UPDATED, BASE_CHANGE} from '../actions/Controls.js';
 
 export default function controlsReducer(previousControlState, action) {
 
@@ -13,6 +13,11 @@ export default function controlsReducer(previousControlState, action) {
             },
             visible_layers: ["0"],
             active_layer: 0,
+            mapData: {
+                mapType: "VFR",
+                url: "https://t.skyvector.com/9c82561433a66/vfr/1604/{z}/{x}/{y}.jpg",
+                maxZoom: 11
+            }
         };
     }
 
@@ -35,6 +40,9 @@ export default function controlsReducer(previousControlState, action) {
             break;
         case TOOL_PROPERTIES_UPDATED:
             Object.keys(action.properties).forEach(function(key) { newState.tool.properties[key] = parseInt(action.properties[key]); });
+            break;
+        case BASE_CHANGE:
+            newState.mapData = action.properties;
             break;
         default:
             break;
