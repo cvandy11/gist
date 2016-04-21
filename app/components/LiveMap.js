@@ -29,10 +29,7 @@ class LiveMap extends React.Component {
 
     render() {
         const position = [48.73205, -122.48627];
-	const bounds =[
-		[-120,-220],
-		[120,220]
-		];
+	    const bounds = [ [-120,-220], [120,220] ];
 
         var layerGroups = {
             "0" : [],
@@ -57,7 +54,7 @@ class LiveMap extends React.Component {
             return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{layerGroups[layer_id]}</FeatureGroup>;
         }.bind(this));
 
-/*
+
         if(this.state.rendered) {
             Object.keys(layerGroups).map(function(id) {
                 var leaf = this.refs.map.getLeafletElement();
@@ -74,7 +71,7 @@ class LiveMap extends React.Component {
                 }
             }.bind(this));
         }
-*/
+
 
         return (
             <Map center={position} worldCopyJump={false} zoom={this.props.controls.mapData.maxZoom} minZoom={2} maxBounds={bounds} zoomControl={false} onClick={this.onMapClick.bind(this)} ref='map'>
