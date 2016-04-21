@@ -15,7 +15,6 @@ import {store} from '../store.js';
 class App extends React.Component {
 	constructor(props) {
 		super(props);
-		store.dispatch(initSocket());
 	}
 
     render() {

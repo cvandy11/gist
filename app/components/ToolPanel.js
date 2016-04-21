@@ -93,7 +93,7 @@ class ToolOptions extends React.Component {
                     </Row>
 
                     <Row>
-                        <input onChange={this.updateRange} type="range" min={50} max={1000} defaultValue={200} />
+                        <input onChange={this.updateRange} type="range" min={400} max={8000} defaultValue={800} />
                     </Row>
 
                     <Row>
