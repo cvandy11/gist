@@ -13,11 +13,11 @@ var db = pgp("postgress://gist:m@ps&t!l3s@127.0.0.1:5432/gist");
 
 const isDeveloping = process.env.NODE_ENV !== 'production';
 var app = express().http().io();
-const port = isDeveloping ? process.env.PORT : 3000;
+var port = isDeveloping ? process.env.PORT : 3000;
 
 app.use(express.static(__dirname + '/dist'));
 
-
+/*
 if(isDeveloping) {
     const compiler = webpack(config);
 
@@ -35,10 +35,14 @@ if(isDeveloping) {
     }));
 
     app.use(webpackHotMiddleware(compiler));
-}
+}*/
 
 app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, 'dist/index.html'));
+    res.sendfile(path.join(__dirname, 'dist/index.html'));
+});
+
+app.get('/mission/:mission_id', function(req, res) {
+    res.sendfile(path.join(__dirname, 'dist/index.html'));
 });
 
 //SOCKET ROUTES
@@ -92,6 +96,22 @@ app.io.route('ready', function(req) {
     req.io.respond(true);
 });
 
+app.io.route('get-mission-info', function(req) {
+    getMissionInfo(req.data.mission_id).then(function(data) {
+        if(!data) {
+            req.io.respond({
+                type: "error",
+                message: "There was a problem getting the mission info."
+            });
+        } else {
+            req.io.respond({
+                type: "success",
+                mission: data
+            });
+        }
+    });
+});
+
 //gets all active missions
 app.io.route('get-missions', function(req) {
     getMissions().then(function(data) {
@@ -143,8 +163,8 @@ app.io.route('create-mission', function(req) {
 });
 
 //gets mission layers for the given mission_id
-app.io.route('get-mission-layers', function(req) {
-    getMissionLayers(req.data.mission_id).then(function(data) {
+app.io.route('get-layers', function(req) {
+    getLayers(req.data.mission_id).then(function(data) {
         if(!data) {
             req.io.respond({
                 type: "error",
@@ -219,16 +239,16 @@ app.io.route('toggle-delete-object', function(req) {
 //creates a new layer in the database
 app.io.route('create-layer', function(req) {
     createLayer(req.data).then(function(data) {
-        if(data) {
-            req.io.room(req.data.mission_id).broadcast('layer-created', req.data);
-            req.io.respond({
-                type: "success",
-                data: req.data
-            });
-        } else {
+        if(!data) {
             req.io.respond({
                 type: "error",
                 message: "There was a problem creating the layer in the database."
+            });
+        } else {
+            req.io.room(req.data.mission_id).broadcast('layer-created', data);
+            req.io.respond({
+                type: "success",
+                data: data
             });
         }
     });
@@ -376,8 +396,8 @@ var toggleDeleteObject = function(mission_id, layer_id, object_id) {
 
 //creates a new layer
 var createLayer = function(object) {
-    var promise = db.none("INSERT INTO layer_info(mission_id, layer_id, layer_name) VALUES(${mission_id}, ${layer_id}, ${layer_name}))", object).then(function() {
-        return true;
+    var promise = db.one("INSERT INTO layer_info(mission_id, layer_name) VALUES(${mission_id}, ${layer_name}) RETURNING *", object).then(function(data) {
+        return data;
     }).catch(function(error) {
         console.log("ERROR: " + error);
         return false;

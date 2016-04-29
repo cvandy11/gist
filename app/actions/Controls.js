@@ -3,54 +3,56 @@ const LAYER_TOGGLED = "LAYER_TOGGLED";
 const TOOL_SELECTED = "TOOL_SELECTED";
 const TOOL_PROPERTIES_UPDATED = "TOOL_PROPERTIES_UPDATED";
 const BASE_CHANGE = "BASE_CHANGE";
-const MAP_RECENTER = "MAP_RECENTER";
 
-import {store} from '../store.js';
+import {push, replace} from 'redux-router';
 
-var toggleLayer = function(layer_id) {
-    store.dispatch({
+function toggleLayer(layer_id) {
+    return({
         type: LAYER_TOGGLED,
         layer_id: layer_id
     });
 }
 
-var selectLayer = function(layer_id) {
-    store.dispatch({
+function selectLayer(layer_id) {
+    return({
         type: LAYER_SELECTED,
         layer_id: layer_id
     });
 }
 
-var selectTool = function(tool) {
-    store.dispatch({
+function selectTool(tool) {
+    return({
         type: TOOL_SELECTED,
         tool: tool
     });
 }
 
-var updateToolProperties = function(properties) {
-    store.dispatch({
+function updateToolProperties(properties) {
+    return({
         type: TOOL_PROPERTIES_UPDATED,
         properties: properties
     });
 }
 
-var changeBase = function(newBase) {
-    console.log(newBase);
-
-    store.dispatch({
+function changeBase(newBase) {
+    return({
        type: BASE_CHANGE,
        properties: newBase
     });
 }
 
-var recenterMap = function(properties) {
-    store.dispatch({
-        type: MAP_RECENTER,
-        properties: properties
+function pushRoute(route) {
+    return push({
+        pathName: route
     });
 }
 
-export{LAYER_SELECTED, LAYER_TOGGLED, TOOL_SELECTED, TOOL_PROPERTIES_UPDATED, BASE_CHANGE, MAP_RECENTER};
+function replaceRoute(route) {
+    return replace({
+        pathName: route
+    });
+}
 
-export {toggleLayer, selectLayer, selectTool, updateToolProperties, changeBase, recenterMap};
+export{LAYER_SELECTED, LAYER_TOGGLED, TOOL_SELECTED, TOOL_PROPERTIES_UPDATED, BASE_CHANGE};
+
+export {toggleLayer, selectLayer, selectTool, updateToolProperties, changeBase, pushRoute, replaceRoute};

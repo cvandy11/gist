@@ -1,4 +1,4 @@
-import {OBJECT_INSERTED} from '../actions/Connect.js';
+import {OBJECT_INSERTED, OBJECTS_RECEIVED} from '../actions/Connect.js';
 
 export default function objectReducer(previousObjectState, action) {
 
@@ -13,6 +13,10 @@ export default function objectReducer(previousObjectState, action) {
         case OBJECT_INSERTED:
             newState.loaded = true;
             newState.objects.push(action.object);
+            break;
+        case OBJECTS_RECEIVED:
+            newState.loaded = true;
+            newState.objects.push(action.data);
             break;
         default:
             break;

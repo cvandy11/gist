@@ -2,7 +2,7 @@ import React from 'react';
 import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup} from 'react-leaflet';
 import {connect} from 'react-redux';
 
-import {insertObject} from '../actions/Connect.js';
+import {insertObject, getMission} from '../actions/Connect.js';
 
 class LiveMap extends React.Component {
     constructor(props) {
@@ -31,13 +31,6 @@ class LiveMap extends React.Component {
         const position = [48.73205, -122.48627];
 	    const bounds = [ [-120,-220], [120,220] ];
 
-        var layerGroups = {
-            "0" : [],
-            "1" : [],
-            "2" : [],
-            "3" : []
-        }
-
         //building the list of all objects that are in the reducer
         this.props.draw.objects.map(function(obj, i) {
             switch(obj.type) {
@@ -50,13 +43,13 @@ class LiveMap extends React.Component {
             }
         }.bind(this));
 
-        var layers = Object.keys(layerGroups).map(function(layer_id) {
-            return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{layerGroups[layer_id]}</FeatureGroup>;
+        var layers = Object.keys(this.props.data.layers).map(function(layer_id) {
+            return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{this.props.data.layers[layer_id].layer_name}</FeatureGroup>;
         }.bind(this));
 
 
-        if(this.state.rendered) {
-            Object.keys(layerGroups).map(function(id) {
+        if(this.props.data.layers[0] && typeof this.refs["layer-"+this.props.layers[0].layer_id] != undefined) {
+            Object.keys(this.props.data.layers).map(function(id) {
                 var leaf = this.refs.map.getLeafletElement();
                 var layer = this.refs["layer-"+id].getLeafletElement();
 
@@ -71,7 +64,6 @@ class LiveMap extends React.Component {
                 }
             }.bind(this));
         }
-
 
         return (
             <Map center={position} worldCopyJump={false} zoom={this.props.controls.mapData.maxZoom} minZoom={2} maxBounds={bounds} zoomControl={false} onClick={this.onMapClick.bind(this)} ref='map'>
@@ -89,11 +81,11 @@ class LiveMap extends React.Component {
 
 //puts the data from the reducers into a dictionary
 const mapState = function(state) {
-    return {"draw": state.drawObject, "controls": state.controls};
+    return {"draw": state.drawObject, "controls": state.controls, "data": state.data};
 }
 
 //connects the mapState, functions, and class together
 export default connect(
     mapState,
-    {insertObject: insertObject}
+    {insertObject: insertObject, getMission}
 )(LiveMap);

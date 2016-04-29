@@ -5,6 +5,7 @@ var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  target: "node",
   entry: [
     path.join(__dirname, 'app/main.js')
   ],
