@@ -198,12 +198,12 @@ app.io.route('toggle-mission-archive', function(req) {
 
 //inserts the object to database, broadcasts it to the room if successful, and returns database insert status
 app.io.route('insert-object', function(req) {
-    insertObject(req.data.object).then(function(data) {
+    insertObject(req.data).then(function(data) {
         if(data) {
-            req.io.room(req.data.mission_id).broadcast('object-inserted', req.data.object);
+            req.io.room(req.data.mission_id).broadcast('object-inserted', req.data);
             req.io.respond({
                type: "success",
-               data: req.data.object
+               data: req.data
             });
         } else {
             req.io.respond({

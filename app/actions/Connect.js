@@ -44,7 +44,7 @@ function initSocket() {
 //object must be an object with a type, coordinates, and optional properties for styling the object
 function insertObject(object) {
     return function(dispatch) {
-        socket.emit('insert-object', {"mission_id": mission_id,"object": object}, function(data) {
+        socket.emit('insert-object', object, function(data) {
             if(data.type == "error") {
                 dispatch({
                     type: ERROR,
@@ -187,7 +187,21 @@ function getMission(mission_id) {
                     type: MISSION_SELECTED,
                     mission: data.mission
                 });
-                dispatch(getLayers(mission_id));
+            }
+        });
+
+        socket.emit('get-layers', {mission_id : mission_id}, function(data) {
+            if(data.type =="error") {
+                dispatch({
+                    type: ERROR,
+                    message: data.message
+                });
+            } else {
+                //THIS IS BREAKING EVERYTHING WUT
+                dispatch({
+                    type: LAYERS_RECEIVED,
+                    layers: data.data
+                });
             }
         });
     }

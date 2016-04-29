@@ -14,7 +14,6 @@ class LayerPanel extends React.Component {
     }
 
 	render() {
-        console.log(this.props.data.layers);
 		return (
             <div className="layer_panel">
                 <Info mission_id={this.props.data.mission_info.mission_id} mission_description={this.props.data.mission_info.mission_description} center={this.props.data.mission_info.center} />

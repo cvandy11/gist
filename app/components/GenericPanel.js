@@ -25,6 +25,10 @@ class GenericPanel extends React.Component{
 				right: 0
 			};
 		}
+
+        if(!this.props.children) {
+            return null
+        }
 		return(
 			<div className="GenericPanel" style={genStyle}>
 				<div style={{padding:" 10px 10px 0 0"}}>
@@ -35,7 +39,6 @@ class GenericPanel extends React.Component{
 		);
 
 	}
-
 }
 
 export default GenericPanel;

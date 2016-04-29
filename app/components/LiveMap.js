@@ -24,15 +24,18 @@ class LiveMap extends React.Component {
     //fired whenever there is a click event on the map
     //type, coords, properties passed to server for saving/redrawing
     onMapClick(e) {
-        insertObject({layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: e.latlng, properties: this.props.controls.tool.properties});
+        this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: e.latlng, properties: this.props.controls.tool.properties});
     }
 
     render() {
         const position = [48.73205, -122.48627];
 	    const bounds = [ [-120,-220], [120,220] ];
 
+        var layerGroups = {};
+
         //building the list of all objects that are in the reducer
         this.props.draw.objects.map(function(obj, i) {
+            if(!layerGroups[obj.layer_id]) layerGroups[obj.layer_id] = [];
             switch(obj.type) {
                 case("Point"):
                     layerGroups[obj.layer_id].push(<Circle key={i} className="" center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color}></Circle>);
@@ -43,9 +46,13 @@ class LiveMap extends React.Component {
             }
         }.bind(this));
 
-        var layers = Object.keys(this.props.data.layers).map(function(layer_id) {
-            return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{this.props.data.layers[layer_id].layer_name}</FeatureGroup>;
-        }.bind(this));
+        var layers = null;
+
+        if(this.props.data.layers && this.props.data.layers.length > 0) {
+            layers = Object.keys(this.props.data.layers).map(function(layer_id) {
+                return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{this.props.data.layers[layer_id].layer_name}</FeatureGroup>;
+            }.bind(this));
+        }
 
 
         if(this.props.data.layers[0] && typeof this.refs["layer-"+this.props.layers[0].layer_id] != undefined) {
