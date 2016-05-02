@@ -159,8 +159,8 @@ app.io.route('insert-object', function(req) {
 });
 
 //sets or unsets delete flag and lets the room know about it
-app.io.route('toggle-delete-object', function(req) {
-    toggleDeleteObject(req.data.mission_id, req.data.layer_id, req.data.object_id).then(function(data) {
+app.io.route('toggle-object-delete', function(req) {
+    toggleDeleteObject(req.data.object_id).then(function(data) {
         if(!data) {
             req.io.respond({
                 type: "error",
@@ -168,13 +168,13 @@ app.io.route('toggle-delete-object', function(req) {
             });
         } else {
             if(data.deleted) {
-                req.io.room(req.data.mission_id).broadcast('object-deleted', req.data.object_id);
+                req.io.room(req.data.mission_id).broadcast('object-deleted', data.object_id);
             } else {
                 req.io.room(req.data.mission_id).broadcast('object-inserted', data);
             }
             req.io.respond({
                 type: "success",
-                object_id: req.data.object_id
+                object_id: data.object_id
             });
         }
     });
@@ -328,9 +328,9 @@ var insertObject = function(object) {
 }
 
 //toggle whether object is marked as deleted or not
-var toggleDeleteObject = function(mission_id, layer_id, object_id) {
-    var promise = db.none("UPDATE draw_objects SET deleted = NOT deleted WHERE mission_id = $1 AND layer_id = $2 AND object_id = $3", [mission_id, layer_id, object_id]).then(function(data) {
-        return true;
+var toggleDeleteObject = function(object_id) {
+    var promise = db.one("UPDATE draw_objects SET deleted = NOT deleted WHERE object_id = $1 RETURNING *", [object_id]).then(function(data) {
+        return data;
     }).catch(function(error) {
         console.log("ERROR: " + error);
         return false;

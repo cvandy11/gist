@@ -112,7 +112,15 @@ const Circle = {
     description: "A circle with diameter in miles and drawn in the given color."
 };
 
+const Erase = {
+    type: "Eraser",
+    properties: null,
+    options: null,
+    glyph: "glyphicon-erase",
+    description: "Click on elements on the map to erase them"
+}
+
 //list of all tools, used in rendering things
-const toolList = [Circle];
+const toolList = [Circle, Erase];
 
 export default toolList;

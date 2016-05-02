@@ -36,7 +36,7 @@ class Info extends React.Component {
 		return 	<div className="info">
 				<p><span id="info_id">{this.props.mission_id}</span><br />
 				<span id="info_description">{this.props.mission_description}</span>
-				<Button bsStyle="primary" bsSize="xsmall">{this.props.data.mission_info.center.lat}, {this.props.data.mission_info.center.lng}</Button></p>
+				<Button bsStyle="primary" bsSize="xsmall">{this.props.center.lat}, {this.props.center.lng}</Button></p>
 			</div>
 	}
 }

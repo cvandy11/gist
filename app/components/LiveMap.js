@@ -2,11 +2,12 @@ import React from 'react';
 import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup} from 'react-leaflet';
 import {connect} from 'react-redux';
 
-import {insertObject, getMission} from '../actions/Connect.js';
+import {insertObject, getMission, deleteObject} from '../actions/Connect.js';
 
 class LiveMap extends React.Component {
     constructor(props) {
         super(props);
+        this.handleElementClick = this.handleElementClick.bind(this);
     }
 
     componentWillMount() {
@@ -26,7 +27,15 @@ class LiveMap extends React.Component {
     //fired whenever there is a click event on the map
     //type, coords, properties passed to server for saving/redrawing
     onMapClick(e) {
-        this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: e.latlng, properties: this.props.controls.tool.properties});
+        if(this.props.controls.tool.type != "Eraser" && this.props.controls.tool.type != "") {
+            this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: e.latlng, properties: this.props.controls.tool.properties});
+        }
+    }
+
+    handleElementClick(e) {
+        if(this.props.controls.tool.type == "Eraser") {
+            this.props.deleteObject(e.target.options.id);
+        }
     }
 
     render() {
@@ -36,11 +45,12 @@ class LiveMap extends React.Component {
         var layerGroups = {};
 
         //building the list of all objects that are in the reducer
-        this.props.draw.objects.map(function(obj, i) {
+        Object.keys(this.props.draw.objects).map(function(object_id, i) {
+            var obj = this.props.draw.objects[object_id];
             if(!layerGroups[obj.layer_id]) layerGroups[obj.layer_id] = [];
             switch(obj.type) {
                 case("Circle"):
-                    layerGroups[obj.layer_id].push(<Circle key={i} className="" center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color}></Circle>);
+                    layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} onClick={this.handleElementClick} ></Circle>);
                     break;
 
                 default:
@@ -95,5 +105,5 @@ const mapState = function(state) {
 //connects the mapState, functions, and class together
 export default connect(
     mapState,
-    {insertObject: insertObject, getMission}
+    {insertObject, getMission, deleteObject}
 )(LiveMap);
