@@ -41,7 +41,7 @@ class Slider extends React.Component {
         this.setState({
             range: range.target.value
         });
-        store.dispatch(updateToolProperties({radius: (mileToMeter(range.target.value) / 2)}));
+        store.dispatch(updateToolProperties({[this.props.propKey]: (mileToMeter(range.target.value) / 2)}));
     }
 
     render() {
@@ -63,13 +63,13 @@ class Slider extends React.Component {
     }
 }
 
-class ColorDropdown extends React.Component {
+class Dropdown extends React.Component {
     constructor(props) {
         super(props);
     }
 
     updateColor(color) {
-        store.dispatch(updateToolProperties({color: color.target.value}));
+        store.dispatch(updateToolProperties({[this.props.propKey]: color.target.value}));
     }
 
     render() {
@@ -105,8 +105,8 @@ const Circle = {
         color: "blue"
     },
     options: [
-        <Slider title={"Diameter"} min={0.5} max={20} step={0.5} defaultValue={2} key={1} />,
-        <ColorDropdown title={"Color"} colors={["blue", "red", "green"]} key={2} />
+        <Slider title={"Diameter"} min={0.5} max={20} step={0.5} defaultValue={2} propKey={"range"} key={1} />,
+        <Dropdown title={"Color"} colors={["blue", "red", "green"]} propKey={"color"} key={2} />
     ],
     glyph: "glyphicon-record",
     description: "A circle with diameter in miles and drawn in the given color."

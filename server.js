@@ -17,26 +17,6 @@ var port = isDeveloping ? process.env.PORT : 3000;
 
 app.use(express.static(__dirname + '/dist'));
 
-/*
-if(isDeveloping) {
-    const compiler = webpack(config);
-
-    app.use(webpackMiddleware(compiler, {
-        publicPath: config.output.publicPath,
-        contentBase: 'src',
-        stats: {
-            colors: true,
-            hash: false,
-            timings: true,
-            chunks: false,
-            chunkModules: false,
-            modules: false
-        }
-    }));
-
-    app.use(webpackHotMiddleware(compiler));
-}*/
-
 app.get('/', function(req, res) {
     res.sendfile(path.join(__dirname, 'dist/index.html'));
 });
@@ -46,51 +26,6 @@ app.get('/mission/:mission_id', function(req, res) {
 });
 
 //SOCKET ROUTES
-
-//initial connection, gets given mission info, mission layers, and layer object data
-//TODO: change this b/c we already have the mission info from the mission list page
-//TODO: change this to an on connect to mission route
-//TODO: make 'ready' route gather initial data from user
-//TODO: each page should request info as needed, 'ready' should only initialize connection info
-/*
-app.io.route('ready', function(req) {
-    req.io.join(req.data.mission_id);
-    console.log('someone connected to room ' + req.data.mission_id);
-    getMissionInfo(req.data.mission_id).then(function(mission_data) {
-        if(!mission_data) {
-            req.io.respond({
-                type: "error",
-                message: "There was a problem getting the mission info"
-            });
-        } else {
-            getMissionLayers(req.data.mission_id).then(function(layers_data) {
-                if(!layers_data) {
-                    req.io.respond({
-                        type: "error",
-                        message: "There was a problem getting the layers for the mission"
-                    });
-                } else {
-                    getLayerObjects(req.data.mission_id, req.data.default_layer_id).then(function(object_data) {
-                        if(!object_data) {
-                            req.io.respond({
-                                type: "error",
-                                message: "There was a problem getting the objects for the layer."
-                            });
-                        } else {
-                            req.io.respond({
-                                type: "success",
-                                mission_data: mission_data,
-                                layers_data: layers_data,
-                                object_data: object_data
-                            });
-                        }
-                    });
-                }
-            });
-        }
-    });
-});
-*/
 
 app.io.route('ready', function(req) {
     req.io.respond(true);
