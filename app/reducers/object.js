@@ -16,7 +16,7 @@ export default function objectReducer(previousObjectState, action) {
             break;
         case OBJECTS_RECEIVED:
             newState.loaded = true;
-            newState.objects.push(action.data);
+            newState.objects = newState.objects.concat(action.data);
             break;
         default:
             break;

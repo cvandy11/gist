@@ -20,7 +20,7 @@ class LayerPanel extends React.Component {
             <div className="layer_panel">
                 <Info mission_id={this.props.data.mission_info.mission_id} mission_description={this.props.data.mission_info.mission_description} center={this.props.data.mission_info.center} />
                 <Button onClick={this.props.createLayer}>Create Layer</Button>
-                <Layers layers={this.props.data.layers} selectLayer={this.props.selectLayer} toggleLayer={this.props.toggleLayer} getLayerObjects={this.props.getLayerObjects} defaultLayer={this.props.data.default_layer} />
+                <Layers layers={this.props.data.layers} missionId={this.props.data.mission_info.mission_id} selectLayer={this.props.selectLayer} toggleLayer={this.props.toggleLayer} getLayerObjects={this.props.getLayerObjects} defaultLayer={this.props.data.default_layer} />
                 <BaseLayer changeBase={this.props.changeBase} />
             </div>
 		)
@@ -108,7 +108,7 @@ class Layers extends React.Component {
         return function() {
             var oldLayers = this.state.layers;
             if(this.state.retrieved_layers.indexOf(id) < 0) {
-                this.props.getLayerObjects(id);
+                this.props.getLayerObjects(id, this.props.missionId);
                 var l = this.state.retrieved_layers;
                 l.push(id);
                 this.setState({retrieved_layers: l});

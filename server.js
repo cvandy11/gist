@@ -208,16 +208,16 @@ app.io.route('toggle-mission-archive', function(req) {
 //inserts the object to database, broadcasts it to the room if successful, and returns database insert status
 app.io.route('insert-object', function(req) {
     insertObject(req.data).then(function(data) {
-        if(data) {
-            req.io.room(req.data.mission_id).broadcast('object-inserted', req.data);
-            req.io.respond({
-               type: "success",
-               data: req.data
-            });
-        } else {
+        if(!data) {
             req.io.respond({
                 type: "error",
                 message: "There was a problem inserting the object into the database."
+            });
+        } else {
+            req.io.room(req.data.mission_id).broadcast('object-inserted', data);
+            req.io.respond({
+               type: "success",
+               data: data
             });
         }
     });
@@ -383,8 +383,8 @@ var toggleMissionArchive = function(mission_id) {
 
 //inserts the object into the database
 var insertObject = function(object) {
-    var promise = db.none("INSERT INTO draw_objects(mission_id, layer_id, type, coordinates, properties) VALUES(${mission_id}, ${layer_id}, ${type}, ${coordinates}, ${properties})", object).then(function() {
-        return true;
+    var promise = db.one("INSERT INTO draw_objects(mission_id, layer_id, type, coordinates, properties) VALUES(${mission_id}, ${layer_id}, ${type}, ${coordinates}, ${properties}) RETURNING *", object).then(function(data) {
+        return data;
     }).catch(function(error) {
         console.log("ERROR: " + error);
         return false;

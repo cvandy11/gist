@@ -38,7 +38,7 @@ export default function controlsReducer(previousControlState, action) {
             newState.tool = action.tool;
             break;
         case TOOL_PROPERTIES_UPDATED:
-            Object.keys(action.properties).forEach(function(key) { newState.tool.properties[key] = parseInt(action.properties[key]); });
+            Object.keys(action.properties).forEach(function(key) { newState.tool.properties[key] = action.properties[key]; });
             break;
         case BASE_CHANGE:
             newState.mapData = action.properties;
