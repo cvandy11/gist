@@ -13,10 +13,10 @@ import {replaceRoute} from '../actions/Controls.js';
 class MissionList extends React.Component {
     constructor(props) {
         super(props);
-        this.toggleModal.bind(this);
-        this.confirmToggle.bind(this);
-        this.archiveButton.bind(this);
-        this.createButton.bind(this);
+        this.toggleModal = this.toggleModal.bind(this);
+        this.confirmToggle = this.confirmToggle.bind(this);
+        this.archiveButton = this.archiveButton.bind(this);
+        this.createButton = this.createButton.bind(this);
     }
 
     componentWillMount() {

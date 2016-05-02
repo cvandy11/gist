@@ -31,13 +31,17 @@ class LiveMap extends React.Component {
         const position = [48.73205, -122.48627];
 	    const bounds = [ [-120,-220], [120,220] ];
 
+        //TODO redo rendering of objects into layers, organize objects by layer_id in reducer, keyed by layer_id -> object_id
+        //server has to append object_id to returned object
+
         var layerGroups = {};
 
+        console.log(this.props.draw.objects);
         //building the list of all objects that are in the reducer
         this.props.draw.objects.map(function(obj, i) {
             if(!layerGroups[obj.layer_id]) layerGroups[obj.layer_id] = [];
             switch(obj.type) {
-                case("Point"):
+                case("Circle"):
                     layerGroups[obj.layer_id].push(<Circle key={i} className="" center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color}></Circle>);
                     break;
 
@@ -48,14 +52,15 @@ class LiveMap extends React.Component {
 
         var layers = null;
 
-        if(this.props.data.layers && this.props.data.layers.length > 0) {
+        if(this.props.data.layers && Object.keys(this.props.data.layers).length > 0) {
             layers = Object.keys(this.props.data.layers).map(function(layer_id) {
                 return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{this.props.data.layers[layer_id].layer_name}</FeatureGroup>;
             }.bind(this));
         }
 
+        layers = null;
 
-        if(this.props.data.layers[0] && typeof this.refs["layer-"+this.props.layers[0].layer_id] != undefined) {
+        if(this.props.data.layers[0] && typeof this.refs["layer-"+this.props.layers[0].layer_id] != undefined && this.state.rendered) {
             Object.keys(this.props.data.layers).map(function(id) {
                 var leaf = this.refs.map.getLeafletElement();
                 var layer = this.refs["layer-"+id].getLeafletElement();

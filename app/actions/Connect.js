@@ -38,8 +38,6 @@ function initSocket() {
     //TODO event listeners for mission created, mission archived, layer created, layer deleted, object deleted
 }
 
-//TODO connect to mission route, get layers for mission route, create default layer on mission create, auto increment layer_id (make it serial?)
-
 //function to tell the server when you inserted an object and the display on your map as well
 //object must be an object with a type, coordinates, and optional properties for styling the object
 function insertObject(object) {
@@ -79,7 +77,6 @@ function deleteObject(object_id) {
 }
 
 //function to select layer and display it
-//TODO create bulk insert action and send a list to the reducer
 function getLayerObjects(layer_id, mission_id) {
     return function(dispatch) {
         socket.emit('get-layer-objects', {mission_id: mission_id, layer_id: layer_id}, function(data) {

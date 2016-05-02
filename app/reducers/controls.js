@@ -5,13 +5,12 @@ export default function controlsReducer(previousControlState, action) {
     if(previousControlState == undefined) {
         return {
             tool: {
-                type: "Point",
+                type: "",
                 properties: {
-                    radius: 200,
-                    color: "blue",
-                }
+                },
+                options: null
             },
-            visible_layers: ["0"],
+            visible_layers: [],
             active_layer: 0,
             mapData: {
                 mapType: "VFR",

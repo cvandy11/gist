@@ -8,7 +8,8 @@ export default function dataReducer(previousControlState, action) {
         return {
             missions : {},
             mission_info : {},
-            layers : {}
+            layers : {},
+            default_layer: -1
         };
     }
 
@@ -38,6 +39,9 @@ export default function dataReducer(previousControlState, action) {
         case LAYERS_RECEIVED:
             for(let layer of action.layers) {
                 newState.layers[layer.layer_id] = layer;
+                if(newState.default_layer == -1 || parseInt(layer.layer_id) < parseInt(newState.default_layer)) {
+                    newState.default_layer = layer.layer_id + "";
+                }
             }
             break;
         default:

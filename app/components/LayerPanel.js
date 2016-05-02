@@ -7,18 +7,20 @@ import {Modal, ButtonGroup, Button, ListGroup, ListGroupItem, Input, Glyphicon, 
 import {getLayerObjects} from '../actions/Connect.js';
 import {changeBase, selectLayer, toggleLayer} from "../actions/Controls.js";
 
-//loads when I click create layer?! why?!
 class LayerPanel extends React.Component {
 	constructor(props) {
 		super(props);
     }
 
 	render() {
+        if(this.props.data.default_layer == -1) {
+            return null
+        }
 		return (
             <div className="layer_panel">
                 <Info mission_id={this.props.data.mission_info.mission_id} mission_description={this.props.data.mission_info.mission_description} center={this.props.data.mission_info.center} />
                 <Button onClick={this.props.createLayer}>Create Layer</Button>
-                <Layers layers={this.props.data.layers} selectLayer={this.props.selectLayer} toggleLayer={this.props.toggleLayer} getLayerObjects={this.props.getLayerObjects} />
+                <Layers layers={this.props.data.layers} selectLayer={this.props.selectLayer} toggleLayer={this.props.toggleLayer} getLayerObjects={this.props.getLayerObjects} defaultLayer={this.props.data.default_layer} />
                 <BaseLayer changeBase={this.props.changeBase} />
             </div>
 		)
@@ -97,7 +99,9 @@ class Layers extends React.Component {
             active_layer: -1,
             visible_layers: [],
             retrieved_layers: []
-        });
+        }, function() {
+            this.toggleLayerActive(this.props.defaultLayer).bind(this)();
+        }.bind(this));
     }
 
     toggleLayerVisibility(id) {
@@ -116,7 +120,7 @@ class Layers extends React.Component {
             if(v.indexOf(id) < 0) {
                 v.push(id);
             } else {
-                v.splice(v.indexOf(id), -1);
+                v.splice(v.indexOf(id), 1);
             }
 
             this.setState({

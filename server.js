@@ -146,7 +146,7 @@ app.io.route('get-archived-missions', function(req) {
     });
 });
 
-//creates a new mission
+//creates a new mission with a default layer
 app.io.route('create-mission', function(req) {
     createMission(req.data.mission).then(function(data) {
         if(!data) {
@@ -155,8 +155,17 @@ app.io.route('create-mission', function(req) {
                 message: "There was a problem creating the mission"
             });
         } else {
-            req.io.respond({
-                type: "success"
+            createLayer({mission_id: req.data.mission.mission_id, layer_name: "Default Layer"}).then(function(data) {
+                if(!data) {
+                    req.io.respond({
+                        type: "error",
+                        message: "There was a problem creating the mission"
+                    });
+                } else {
+                    req.io.respond({
+                        type: "success"
+                    });
+                }
             });
         }
     });
