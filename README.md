@@ -8,6 +8,7 @@ This is a basic starter boilerplate for webpack/react dev environments built wit
 3. use 'npm install' to install all dependencies needed
 
 ## Usage ##
+* Use npm run watch
 * Use 'npm start' to run the server on port 3000
 * 'npm deploy' will build, minify, and uglify the app to /dist/
 * 'npm lint' will lint the project
