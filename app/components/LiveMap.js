@@ -53,6 +53,7 @@ class LiveMap extends React.Component {
     }
 
     handleElementClick(e) {
+         console.log(e);
         if(this.props.controls.tool.type == "Eraser") {
             this.props.deleteObject(e.target.options.id);
         }
@@ -81,7 +82,7 @@ class LiveMap extends React.Component {
                     break;
             }
         }.bind(this));
-	console.log(layerGroups);
+         
         //Insert capgrid
          if(minLayerNum != Number.POSITIVE_INFINITY){
             var capGridArray = this.buildCapGrid();

@@ -65,6 +65,7 @@ class Slider extends React.Component {
 
 class Dropdown extends React.Component {
     constructor(props) {
+      console.log(props);
         super(props);
     }
 
@@ -74,7 +75,9 @@ class Dropdown extends React.Component {
 
     render() {
         var colorOptions = this.props.colors.map(function(color, i) {
-            return <option value={color} key={i} >{color[0].toUpperCase() + color.slice(1)}</option>
+            console.log(color);
+            var keys = Object.keys(color);
+            return <option value={color[keys[0]]} key={i} >{keys[0]}</option>
         });
 
         return <select onChange={this.updateColor.bind(this)}>
@@ -97,6 +100,16 @@ class Dropdown extends React.Component {
  / description is a short description of the tool for the hover popover
 */
 
+const colorDefinitions = [
+   {"Red": "rgb(255,0,0)"},
+   {"Blue": "rgb(0,0,255)"},
+   {"Green": "rgb(0,255,0)"},
+   {"Orange": "rgb(255,125,0)"},
+   {"Yellow": "rgb(255,255,0)"},
+   {"Purple": "rgb(255,0,255)"},
+   {"Teal": "rgb(0,255,255)"}
+];
+
 //default radius is 1 mile, while slider is 2 because the slider is in diameter
 const Circle = {
     type: "Circle",
@@ -105,8 +118,8 @@ const Circle = {
         color: "blue"
     },
     options: [
-        <Slider title={"Diameter"} min={0.5} max={20} step={0.5} defaultValue={2} propKey={"range"} key={1} />,
-        <Dropdown title={"Color"} colors={["blue", "red", "green"]} propKey={"color"} key={2} />
+        <Slider title={"Diameter"} min={0.5} max={20} step={0.5} defaultValue={2} propKey={"radius"} key={1} />,
+        <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} key={2} />
     ],
     glyph: "glyphicon-record",
     description: "A circle with diameter in miles and drawn in the given color."
