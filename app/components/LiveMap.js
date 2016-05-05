@@ -1,5 +1,5 @@
 import React from 'react';
-import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup} from 'react-leaflet';
+import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup, MultiPolyline} from 'react-leaflet';
 import {connect} from 'react-redux';
 
 import {insertObject, getMission, deleteObject} from '../actions/Connect.js';
@@ -24,6 +24,26 @@ class LiveMap extends React.Component {
         }
     }
 
+
+   //Build capgrid object
+   buildCapGrid(){
+      var startLatlng=[49.00,-125.00];
+      var numCol = 32;
+      var numRow = 18;
+      var lineArray=[];
+      //do rows.
+      for (var i = 0; i <= numRow; i++){
+         var pushObject = [[startLatlng[0]-(0.25*i),startLatlng[1]],[startLatlng[0]-(0.25*i),startLatlng[1]+(numCol*0.25)]];
+         lineArray.push(pushObject);
+      }
+      //Do columns
+      for(var i = 0; i <= numCol; i++){
+         var pushObject = [[startLatlng[0],startLatlng[1]+(0.25*i)],[startLatlng[0]-(0.25*numRow),startLatlng[1]+(0.25*i)]];
+         lineArray.push(pushObject);
+      }
+      return lineArray;
+   }
+
     //fired whenever there is a click event on the map
     //type, coords, properties passed to server for saving/redrawing
     onMapClick(e) {
@@ -43,11 +63,15 @@ class LiveMap extends React.Component {
 	    const bounds = [ [-120,-220], [120,220] ];
 
         var layerGroups = {};
+        var minLayerNum = Number.POSITIVE_INFINITY;
 
         //building the list of all objects that are in the reducer
         Object.keys(this.props.draw.objects).map(function(object_id, i) {
             var obj = this.props.draw.objects[object_id];
             if(!layerGroups[obj.layer_id]) layerGroups[obj.layer_id] = [];
+            if(obj.layer_id < minLayerNum){
+               minLayerNum = obj.layer_id;
+            }
             switch(obj.type) {
                 case("Circle"):
                     layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} onClick={this.handleElementClick} ></Circle>);
@@ -57,7 +81,12 @@ class LiveMap extends React.Component {
                     break;
             }
         }.bind(this));
-
+	console.log(layerGroups);
+        //Insert capgrid
+         if(minLayerNum != Number.POSITIVE_INFINITY){
+            var capGridArray = this.buildCapGrid();
+            layerGroups[minLayerNum].push(<MultiPolyline polylines={capGridArray} color={"Red"} weight={2} ></MultiPolyline>)
+         }
         var layers = null;
 
         if(this.props.data.layers && Object.keys(this.props.data.layers).length > 0) {
