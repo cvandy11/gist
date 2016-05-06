@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import {Grid, Row, Col, FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
+import {Grid, Row, Col, FormGroup, FormControl, ControlLabel, Checkbox} from 'react-bootstrap';
 
 import {store} from '../store.js';
 import {updateToolProperties} from '../actions/Controls.js';
@@ -41,7 +41,11 @@ class Slider extends React.Component {
         this.setState({
             range: range.target.value
         });
-        store.dispatch(updateToolProperties({[this.props.propKey]: (mileToMeter(range.target.value) / 2)}));
+         if(this.props.toMeter ===true){
+           store.dispatch(updateToolProperties({[this.props.propKey]: (mileToMeter(range.target.value) / 2)}));
+         } else{
+            store.dispatch(updateToolProperties({[this.props.propKey]: range.target.value}));
+         }
     }
 
     render() {
@@ -65,7 +69,6 @@ class Slider extends React.Component {
 
 class Dropdown extends React.Component {
     constructor(props) {
-      console.log(props);
         super(props);
     }
 
@@ -75,15 +78,43 @@ class Dropdown extends React.Component {
 
     render() {
         var colorOptions = this.props.colors.map(function(color, i) {
-            console.log(color);
             var keys = Object.keys(color);
             return <option value={color[keys[0]]} key={i} >{keys[0]}</option>
         });
 
-        return <select onChange={this.updateColor.bind(this)}>
+        return <Grid style={{width:"100%"}}>
+         <Row>
+            <p> {this.props.title}</p>
+         </Row>
+         <Row>
+          <select onChange={this.updateColor.bind(this)}>
             {colorOptions}
         </select>
+        </Row>
+        </Grid>
     }
+}
+
+class ToggleBox extends React.Component {
+   constructor(props){
+      super(props);
+   }
+
+   updateFlag(boolVal){
+      store.dispatch(updatetoolProperties({[this.props.propKey]:true }));
+   }
+
+   render(){
+      return <Grid style={{width:"100%"}}>
+               <Row>
+               <p>{this.props.title}</p>
+               </Row>
+               <Row>
+                     <input type="checkbox"/>
+               </Row>
+            </Grid>
+   }
+
 }
 
 //DEFINITION OF TOOLS
@@ -113,20 +144,51 @@ const colorDefinitions = [
 //default radius is 1 mile, while slider is 2 because the slider is in diameter
 const Circle = {
     type: "Circle",
+   twoPoint: false,
     properties: {
         radius: mileToMeter(1),
-        color: "blue"
+        color: "blue",
+        fill: true,
+        fillColor: "blue",
+        stroke: true,
+        strokeWidth: 5
     },
     options: [
-        <Slider title={"Diameter"} min={0.5} max={20} step={0.5} defaultValue={2} propKey={"radius"} key={1} />,
-        <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} key={2} />
+        <Slider title={"Diameter"} min={0.5} max={20} step={0.5} defaultValue={2} propKey={"radius"} toMeter={true} key={1} />,
+        <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} key={2} />,
+        <ToggleBox title={"Fill?"} propKey={"fill"} key={3} />,
+        <Dropdown title={"FillColor"} colors={colorDefinitions} propKey={"fillColor"} key={4} />,
+        <ToggleBox title={"Stroke?"} propKey={"stroke"} key={5} />,
+        <Slider title={"Stroke Pixels"} min={1} max={25} step={1} defaultValue={5} propKey={"strokeWidth"} toMeter={false} key={6} />
     ],
     glyph: "glyphicon-record",
     description: "A circle with diameter in miles and drawn in the given color."
 };
 
+const Rectangle = {
+   type: "Rectangle",
+   twoPoint: true,
+   properties: {
+      color: "blue",
+      fill: true,
+      fillColor: "blue",
+      stroke:true,
+      strokeWidth: 5
+   },
+   options: [
+      <Dropdown title={"Stroke Color"} colors={colorDefinitions} propKey={"color"} key={1} />,
+      <ToggleBox title={"Fill?"} propKey={"fill"} key={2} />,
+      <Dropdown title={"Fill Color"} colors={colorDefinitions} propKey={"fillColor"} key={3} />,
+      <ToggleBox title={"Stroke?"} propKey={"stroke"} key={4} />,
+      <Slider title={"Stroke Width"} min={1} max={25} step={1} defaultValue={5} propKey={"strokeWidth"} key={5} />
+   ],
+   glyph:"glyphicon-unchecked",
+   description: "Click on two locations to draw a rectangle"
+}
+
 const Erase = {
     type: "Eraser",
+    twoPoint: false,
     properties: null,
     options: null,
     glyph: "glyphicon-erase",
@@ -134,6 +196,6 @@ const Erase = {
 }
 
 //list of all tools, used in rendering things
-const toolList = [Circle, Erase];
+const toolList = [Circle, Erase, Rectangle];
 
 export default toolList;
