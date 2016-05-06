@@ -1,5 +1,5 @@
 import React from 'react';
-import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup, MultiPolyline} from 'react-leaflet';
+import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup, MultiPolyline, Rectangle} from 'react-leaflet';
 import {connect} from 'react-redux';
 
 import {insertObject, getMission, deleteObject} from '../actions/Connect.js';
@@ -12,7 +12,8 @@ class LiveMap extends React.Component {
 
     componentWillMount() {
         this.setState({
-            rendered: false
+            rendered: false,
+            coordList:[]
         });
     }
 
@@ -47,13 +48,25 @@ class LiveMap extends React.Component {
     //fired whenever there is a click event on the map
     //type, coords, properties passed to server for saving/redrawing
     onMapClick(e) {
+      console.log("on map click registered");
         if(this.props.controls.tool.type != "Eraser" && this.props.controls.tool.type != "") {
-            this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: e.latlng, properties: this.props.controls.tool.properties});
+            if(this.props.controls.tool.twoPoint){
+               this.state.coordList.push(e.latlng);
+               console.log("coord list is");
+               console.log(this.state.coordList);
+               if( this.state.coordList.length>= 2){
+                  console.log("attempted to insert rectangle");
+                  this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: this.state.coordList, properties: this.props.controls.tool.properties});
+                 this.state.coordList.splice(0,2);
+               }
+            } else {
+               this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: e.latlng, properties: this.props.controls.tool.properties});
+            }
         }
     }
 
     handleElementClick(e) {
-         console.log(e);
+         console.log(e.target);
         if(this.props.controls.tool.type == "Eraser") {
             this.props.deleteObject(e.target.options.id);
         }
@@ -73,9 +86,13 @@ class LiveMap extends React.Component {
             if(obj.layer_id < minLayerNum){
                minLayerNum = obj.layer_id;
             }
+            console.log(obj);
             switch(obj.type) {
                 case("Circle"):
                     layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} onClick={this.handleElementClick} ></Circle>);
+                    break;
+                case("Rectangle"):
+                    layerGroups[obj.layer_id].push(<Rectangle key={i} id={obj.object_id} bounds={obj.coordinates} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth} onClick={this.handleElementClick} > </Rectangle>);
                     break;
 
                 default:
