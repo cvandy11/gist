@@ -10,7 +10,7 @@ export default function controlsReducer(previousControlState, action) {
                 },
                 options: null
             },
-            visible_layers: [],
+            visible_layers: ["CAP"],
             active_layer: 0,
             mapData: {
                 mapType: "VFR",
