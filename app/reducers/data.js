@@ -8,7 +8,7 @@ export default function dataReducer(previousControlState, action) {
         return {
             missions : {},
             mission_info : {},
-            layers : {},
+            layers : {"CAP":[]},
             default_layer: -1
         };
     }

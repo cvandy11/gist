@@ -48,7 +48,7 @@ class LiveMap extends React.Component {
     //fired whenever there is a click event on the map
     //type, coords, properties passed to server for saving/redrawing
     onMapClick(e) {
-      console.log("on map click registered");
+      console.log(e);
         if(this.props.controls.tool.type != "Eraser" && this.props.controls.tool.type != "") {
             if(this.props.controls.tool.twoPoint){
                this.state.coordList.push(e.latlng);
@@ -56,7 +56,8 @@ class LiveMap extends React.Component {
                console.log(this.state.coordList);
                if( this.state.coordList.length>= 2){
                   console.log("attempted to insert rectangle");
-                  this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: this.state.coordList, properties: this.props.controls.tool.properties});
+                  var insertObject = {coords:this.state.coordList};
+                  this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: insertObject, properties: this.props.controls.tool.properties});
                  this.state.coordList.splice(0,2);
                }
             } else {
@@ -67,7 +68,7 @@ class LiveMap extends React.Component {
 
     handleElementClick(e) {
          console.log(e.target);
-        if(this.props.controls.tool.type == "Eraser") {
+        if(this.props.controls.tool.type == "Eraser" && e.target.options.layerID==this.props.controls.active_layer) {
             this.props.deleteObject(e.target.options.id);
         }
     }
@@ -76,23 +77,20 @@ class LiveMap extends React.Component {
         const position = [48.73205, -122.48627];
 	    const bounds = [ [-120,-220], [120,220] ];
 
-        var layerGroups = {};
-        var minLayerNum = Number.POSITIVE_INFINITY;
+        var layerGroups = {CAP:[]};
 
         //building the list of all objects that are in the reducer
         Object.keys(this.props.draw.objects).map(function(object_id, i) {
             var obj = this.props.draw.objects[object_id];
             if(!layerGroups[obj.layer_id]) layerGroups[obj.layer_id] = [];
-            if(obj.layer_id < minLayerNum){
-               minLayerNum = obj.layer_id;
-            }
             console.log(obj);
             switch(obj.type) {
                 case("Circle"):
-                    layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} onClick={this.handleElementClick} ></Circle>);
+                    layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} onClick={this.handleElementClick} layerID={obj.layer_id} ></Circle>);
                     break;
                 case("Rectangle"):
-                    layerGroups[obj.layer_id].push(<Rectangle key={i} id={obj.object_id} bounds={obj.coordinates} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth} onClick={this.handleElementClick} > </Rectangle>);
+                     //var rectCoords = [[obj.coordinates.coords[0].lat,obj.coordinates.coords[0].lng] ,[obj.coordinates.coords[1].lat, obj.coordinates.coords[1].lng]];
+                    layerGroups[obj.layer_id].push(<Rectangle key={i} id={obj.object_id} bounds={obj.coordinates.coords} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth}  onClick={this.handleElementClick} layerID={obj.layer_id} ></Rectangle>);
                     break;
 
                 default:
@@ -101,10 +99,11 @@ class LiveMap extends React.Component {
         }.bind(this));
          
         //Insert capgrid
-         if(minLayerNum != Number.POSITIVE_INFINITY){
+//         if(minLayerNum != Number.POSITIVE_INFINITY){
             var capGridArray = this.buildCapGrid();
-            layerGroups[minLayerNum].push(<MultiPolyline polylines={capGridArray} color={"Red"} weight={2} ></MultiPolyline>)
-         }
+            layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray} color={"Red"} weight={2} ></MultiPolyline>)
+  //       }
+            console.log(layerGroups);
         var layers = null;
 
         if(this.props.data.layers && Object.keys(this.props.data.layers).length > 0) {
