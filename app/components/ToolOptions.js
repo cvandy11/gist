@@ -82,7 +82,7 @@ class Dropdown extends React.Component {
             return <option value={color[keys[0]]} key={i} >{keys[0]}</option>
         });
 
-        return <Grid style={{width:"100%"}}>
+        return <Grid className="info" style={{width:"100%"}}>
          <Row>
             <p> {this.props.title}</p>
          </Row>
@@ -101,16 +101,16 @@ class ToggleBox extends React.Component {
    }
 
    updateFlag(boolVal){
-      store.dispatch(updatetoolProperties({[this.props.propKey]:true }));
+      store.dispatch(updateToolProperties({[this.props.propKey]:boolVal.target.checked }));
    }
 
    render(){
-      return <Grid style={{width:"100%"}}>
+      return <Grid className="info" style={{width:"100%"}}>
                <Row>
                <p>{this.props.title}</p>
                </Row>
                <Row>
-                     <input type="checkbox"/>
+                     <input type="checkbox" onChange={this.updateFlag.bind(this)} defaultChecked />
                </Row>
             </Grid>
    }
@@ -132,13 +132,23 @@ class ToggleBox extends React.Component {
 */
 
 const colorDefinitions = [
-   {"Red": "rgb(255,0,0)"},
    {"Blue": "rgb(0,0,255)"},
+   {"Red": "rgb(255,0,0)"},
    {"Green": "rgb(0,255,0)"},
    {"Orange": "rgb(255,125,0)"},
    {"Yellow": "rgb(255,255,0)"},
    {"Purple": "rgb(255,0,255)"},
    {"Teal": "rgb(0,255,255)"}
+];
+
+const iconToolDefs = [
+   {"Plane": "glyphicon-plane"},
+   {"Comment": "glyphicon-comment"},
+   {"Check": "glyphicon-ok"},
+   {"X": "glyphicon-remove"},
+   {"Person": "glyphicon-user"},
+   {"Flag": "glyphicon-flag"},
+   {"Pin": "glyphicon-pushpin"}
 ];
 
 //default radius is 1 mile, while slider is 2 because the slider is in diameter

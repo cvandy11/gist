@@ -17,7 +17,12 @@ class LiveMap extends React.Component {
         });
     }
 
-    componentWillReceiveProps() {
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.controls.tool.type !== this.props.controls.tool.type){
+         this.setState({
+            coordList: []
+         });
+        }
         if(this.props.draw.loaded) {
             this.setState({
                 rendered: true
@@ -50,18 +55,20 @@ class LiveMap extends React.Component {
     onMapClick(e) {
       console.log(e);
         if(this.props.controls.tool.type != "Eraser" && this.props.controls.tool.type != "") {
-            if(this.props.controls.tool.twoPoint){
-               this.state.coordList.push(e.latlng);
-               console.log("coord list is");
-               console.log(this.state.coordList);
-               if( this.state.coordList.length>= 2){
-                  console.log("attempted to insert rectangle");
-                  var insertObject = {coords:this.state.coordList};
-                  this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: insertObject, properties: this.props.controls.tool.properties});
-                 this.state.coordList.splice(0,2);
+            if(e.latlng.lat >= -85 && e.latlng.lat <= 85 && e.latlng.lng >= -180 && e.latlng.lng <= 180){
+               if(this.props.controls.tool.twoPoint){
+                  this.state.coordList.push(e.latlng);
+                  console.log("coord list is");
+                  console.log(this.state.coordList);
+                  if( this.state.coordList.length>= 2){
+                     console.log("attempted to insert rectangle");
+                     var insertObject = {coords:this.state.coordList};
+                     this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: insertObject, properties: this.props.controls.tool.properties});
+                    this.state.coordList.splice(0,2);
+                  }
+               } else {
+                  this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: e.latlng, properties: this.props.controls.tool.properties});
                }
-            } else {
-               this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: e.latlng, properties: this.props.controls.tool.properties});
             }
         }
     }
@@ -83,14 +90,14 @@ class LiveMap extends React.Component {
         Object.keys(this.props.draw.objects).map(function(object_id, i) {
             var obj = this.props.draw.objects[object_id];
             if(!layerGroups[obj.layer_id]) layerGroups[obj.layer_id] = [];
-            console.log(obj);
             switch(obj.type) {
                 case("Circle"):
-                    layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} onClick={this.handleElementClick} layerID={obj.layer_id} ></Circle>);
+                    //layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} onClick={this.handleElementClick} layerID={obj.layer_id} ></Circle>);
+                    layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth} onClick={this.handleElementClick} layerID={obj.layer_id} ></Circle>);
                     break;
                 case("Rectangle"):
-                     //var rectCoords = [[obj.coordinates.coords[0].lat,obj.coordinates.coords[0].lng] ,[obj.coordinates.coords[1].lat, obj.coordinates.coords[1].lng]];
                     layerGroups[obj.layer_id].push(<Rectangle key={i} id={obj.object_id} bounds={obj.coordinates.coords} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth}  onClick={this.handleElementClick} layerID={obj.layer_id} ></Rectangle>);
+                    //var rectCoords = [[obj.coordinates.coords[0].lat,obj.coordinates.coords[0].lng] ,[obj.coordinates.coords[1].lat, obj.coordinates.coords[1].lng]];
                     break;
 
                 default:
@@ -103,7 +110,6 @@ class LiveMap extends React.Component {
             var capGridArray = this.buildCapGrid();
             layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray} color={"Red"} weight={2} ></MultiPolyline>)
   //       }
-            console.log(layerGroups);
         var layers = null;
 
         if(this.props.data.layers && Object.keys(this.props.data.layers).length > 0) {
