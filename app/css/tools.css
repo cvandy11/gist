@@ -1,0 +1,11 @@
+/* tool panel styling */
+
+#tool_panel {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+#tool_panel button {
+    width: 190px;
+    margin: 0 0 5px 0;
+}
