@@ -13,83 +13,38 @@ var db = pgp("postgress://gist:m@ps&t!l3s@127.0.0.1:5432/gist");
 
 const isDeveloping = process.env.NODE_ENV !== 'production';
 var app = express().http().io();
-const port = isDeveloping ? process.env.PORT : 3000;
+var port = isDeveloping ? process.env.PORT : 3000;
 
 app.use(express.static(__dirname + '/dist'));
 
-
-if(isDeveloping) {
-    const compiler = webpack(config);
-
-    app.use(webpackMiddleware(compiler, {
-        publicPath: config.output.publicPath,
-        contentBase: 'src',
-        stats: {
-            colors: true,
-            hash: false,
-            timings: true,
-            chunks: false,
-            chunkModules: false,
-            modules: false
-        }
-    }));
-
-    app.use(webpackHotMiddleware(compiler));
-}
-
 app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, 'dist/index.html'));
+    res.sendfile(path.join(__dirname, 'dist/index.html'));
+});
+
+app.get('/mission/:mission_id', function(req, res) {
+    res.sendfile(path.join(__dirname, 'dist/index.html'));
 });
 
 //SOCKET ROUTES
 
-//initial connection, gets given mission info, mission layers, and layer object data
-//TODO: change this b/c we already have the mission info from the mission list page
-//TODO: change this to an on connect to mission route
-//TODO: make 'ready' route gather initial data from user
-//TODO: each page should request info as needed, 'ready' should only initialize connection info
-/*
 app.io.route('ready', function(req) {
-    req.io.join(req.data.mission_id);
-    console.log('someone connected to room ' + req.data.mission_id);
-    getMissionInfo(req.data.mission_id).then(function(mission_data) {
-        if(!mission_data) {
+    req.io.respond(true);
+});
+
+app.io.route('get-mission-info', function(req) {
+    getMissionInfo(req.data.mission_id).then(function(data) {
+        if(!data) {
             req.io.respond({
                 type: "error",
-                message: "There was a problem getting the mission info"
+                message: "There was a problem getting the mission info."
             });
         } else {
-            getMissionLayers(req.data.mission_id).then(function(layers_data) {
-                if(!layers_data) {
-                    req.io.respond({
-                        type: "error",
-                        message: "There was a problem getting the layers for the mission"
-                    });
-                } else {
-                    getLayerObjects(req.data.mission_id, req.data.default_layer_id).then(function(object_data) {
-                        if(!object_data) {
-                            req.io.respond({
-                                type: "error",
-                                message: "There was a problem getting the objects for the layer."
-                            });
-                        } else {
-                            req.io.respond({
-                                type: "success",
-                                mission_data: mission_data,
-                                layers_data: layers_data,
-                                object_data: object_data
-                            });
-                        }
-                    });
-                }
+            req.io.respond({
+                type: "success",
+                mission: data
             });
         }
     });
-});
-*/
-
-app.io.route('ready', function(req) {
-    req.io.respond(true);
 });
 
 //gets all active missions
@@ -126,7 +81,7 @@ app.io.route('get-archived-missions', function(req) {
     });
 });
 
-//creates a new mission
+//creates a new mission with a default layer
 app.io.route('create-mission', function(req) {
     createMission(req.data.mission).then(function(data) {
         if(!data) {
@@ -135,16 +90,25 @@ app.io.route('create-mission', function(req) {
                 message: "There was a problem creating the mission"
             });
         } else {
-            req.io.respond({
-                type: "success"
+            createLayer({mission_id: req.data.mission.mission_id, layer_name: "Default Layer"}).then(function(data) {
+                if(!data) {
+                    req.io.respond({
+                        type: "error",
+                        message: "There was a problem creating the mission"
+                    });
+                } else {
+                    req.io.respond({
+                        type: "success"
+                    });
+                }
             });
         }
     });
 });
 
 //gets mission layers for the given mission_id
-app.io.route('get-mission-layers', function(req) {
-    getMissionLayers(req.data.mission_id).then(function(data) {
+app.io.route('get-layers', function(req) {
+    getLayers(req.data.mission_id).then(function(data) {
         if(!data) {
             req.io.respond({
                 type: "error",
@@ -178,25 +142,25 @@ app.io.route('toggle-mission-archive', function(req) {
 
 //inserts the object to database, broadcasts it to the room if successful, and returns database insert status
 app.io.route('insert-object', function(req) {
-    insertObject(req.data.object).then(function(data) {
-        if(data) {
-            req.io.room(req.data.mission_id).broadcast('object-inserted', req.data.object);
-            req.io.respond({
-               type: "success",
-               data: req.data.object
-            });
-        } else {
+    insertObject(req.data).then(function(data) {
+        if(!data) {
             req.io.respond({
                 type: "error",
                 message: "There was a problem inserting the object into the database."
+            });
+        } else {
+            req.io.room(req.data.mission_id).broadcast('object-inserted', data);
+            req.io.respond({
+               type: "success",
+               data: data
             });
         }
     });
 });
 
 //sets or unsets delete flag and lets the room know about it
-app.io.route('toggle-delete-object', function(req) {
-    toggleDeleteObject(req.data.mission_id, req.data.layer_id, req.data.object_id).then(function(data) {
+app.io.route('toggle-object-delete', function(req) {
+    toggleDeleteObject(req.data.object_id).then(function(data) {
         if(!data) {
             req.io.respond({
                 type: "error",
@@ -204,13 +168,13 @@ app.io.route('toggle-delete-object', function(req) {
             });
         } else {
             if(data.deleted) {
-                req.io.room(req.data.mission_id).broadcast('object-deleted', req.data.object_id);
+                req.io.room(req.data.mission_id).broadcast('object-deleted', data.object_id);
             } else {
                 req.io.room(req.data.mission_id).broadcast('object-inserted', data);
             }
             req.io.respond({
                 type: "success",
-                object_id: req.data.object_id
+                object_id: data.object_id
             });
         }
     });
@@ -219,16 +183,16 @@ app.io.route('toggle-delete-object', function(req) {
 //creates a new layer in the database
 app.io.route('create-layer', function(req) {
     createLayer(req.data).then(function(data) {
-        if(data) {
-            req.io.room(req.data.mission_id).broadcast('layer-created', req.data);
-            req.io.respond({
-                type: "success",
-                data: req.data
-            });
-        } else {
+        if(!data) {
             req.io.respond({
                 type: "error",
                 message: "There was a problem creating the layer in the database."
+            });
+        } else {
+            req.io.room(req.data.mission_id).broadcast('layer-created', data);
+            req.io.respond({
+                type: "success",
+                data: data
             });
         }
     });
@@ -354,8 +318,8 @@ var toggleMissionArchive = function(mission_id) {
 
 //inserts the object into the database
 var insertObject = function(object) {
-    var promise = db.none("INSERT INTO draw_objects(mission_id, layer_id, type, coordinates, properties) VALUES(${mission_id}, ${layer_id}, ${type}, ${coordinates}, ${properties})", object).then(function() {
-        return true;
+    var promise = db.one("INSERT INTO draw_objects(mission_id, layer_id, type, coordinates, properties) VALUES(${mission_id}, ${layer_id}, ${type}, ${coordinates}, ${properties}) RETURNING *", object).then(function(data) {
+        return data;
     }).catch(function(error) {
         console.log("ERROR: " + error);
         return false;
@@ -364,9 +328,9 @@ var insertObject = function(object) {
 }
 
 //toggle whether object is marked as deleted or not
-var toggleDeleteObject = function(mission_id, layer_id, object_id) {
-    var promise = db.none("UPDATE draw_objects SET deleted = NOT deleted WHERE mission_id = $1 AND layer_id = $2 AND object_id = $3", [mission_id, layer_id, object_id]).then(function(data) {
-        return true;
+var toggleDeleteObject = function(object_id) {
+    var promise = db.one("UPDATE draw_objects SET deleted = NOT deleted WHERE object_id = $1 RETURNING *", [object_id]).then(function(data) {
+        return data;
     }).catch(function(error) {
         console.log("ERROR: " + error);
         return false;
@@ -376,8 +340,8 @@ var toggleDeleteObject = function(mission_id, layer_id, object_id) {
 
 //creates a new layer
 var createLayer = function(object) {
-    var promise = db.none("INSERT INTO layer_info(mission_id, layer_id, layer_name) VALUES(${mission_id}, ${layer_id}, ${layer_name}))", object).then(function() {
-        return true;
+    var promise = db.one("INSERT INTO layer_info(mission_id, layer_name) VALUES(${mission_id}, ${layer_name}) RETURNING *", object).then(function(data) {
+        return data;
     }).catch(function(error) {
         console.log("ERROR: " + error);
         return false;

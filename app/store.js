@@ -1,7 +1,5 @@
 import {createStore, compose, combineReducers, applyMiddleware} from 'redux';
-import {syncHistory, routeReducer} from 'redux-simple-router';
-import {Router, Route, Link, browserHistory} from 'react-router';
-import {createHashHistory} from 'history';
+import { routerReducer } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import React from 'react';
 
@@ -10,20 +8,22 @@ import controlsReducer from './reducers/controls.js';
 import errorReducer from './reducers/error.js';
 import dataReducer from './reducers/data.js';
 
+import MissionList from './components/MissionList.js';
+import App from './components/App.js';
+
+import initSocket from './actions/Connect.js';
+
 //hooks up the routing and draw object reducer into one object
 const reducer = combineReducers({
     drawObject: objectReducer,
     controls: controlsReducer,
     errors: errorReducer,
     data: dataReducer,
-    routing: routeReducer
+    routing: routerReducer
 });
 
-const reduxRouterMiddleware = syncHistory(browserHistory);
-const createStoreWithMiddleware = applyMiddleware(reduxRouterMiddleware, thunk)(createStore);
-
-const store = createStoreWithMiddleware(reducer);
-
-reduxRouterMiddleware.listenForReplays(store);
+const store = compose(
+    applyMiddleware(thunk)
+)(createStore)(reducer);
 
 export {store};

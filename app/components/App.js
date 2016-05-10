@@ -1,14 +1,14 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {Alert} from 'react-bootstrap';
+import {Alert, Modal, Button} from 'react-bootstrap';
 
 import LiveMap from './LiveMap.js';
 import LayerPanel from './LayerPanel.js';
 import ToolPanel from './ToolPanel.js';
-//import ToolPanel from './ToolPanel.js';
 import GenericPanel from './GenericPanel.js';
+import Notification from './Notification.js';
 
-import {initSocket} from '../actions/Connect.js';
+import {createLayer} from '../actions/Connect.js';
 
 import {store} from '../store.js';
 
@@ -16,6 +16,20 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 	}
+
+    componentWillMount() {
+        this.setState({showLayerModal: false});
+    }
+
+    createLayer() {
+        this.props.createLayer({layer_name: this.refs.layer_name.value, mission_id: this.props.data.mission_info.mission_id});
+        this.layerModal();
+    }
+
+    layerModal() {
+        var val = this.state.showLayerModal;
+        this.setState({showLayerModal: !val});
+    }
 
     render() {
         var notification = null;
@@ -25,60 +39,36 @@ class App extends React.Component {
 
         return (
             <div>
-                {notification}
+                <Notification />
                 <LiveMap />
 		        <GenericPanel align="left">
                     <ToolPanel />
 				</GenericPanel>
 				<GenericPanel align="right">
-					<LayerPanel />
+					<LayerPanel createLayer={this.layerModal.bind(this)} />
 				</GenericPanel>
+
+                <Modal show={this.state.showLayerModal} onHide={this.layerModal.bind(this)}>
+                    <Modal.Header>
+                        <h4>Create Layer</h4>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>Layer Name: <input type="text" ref="layer_name"/></p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={this.createLayer.bind(this)}>Create</Button> <Button onClick={this.layerModal.bind(this)} >Cancel</Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         )
     }
 }
 
-class Notification extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    componentWillMount() {
-        this.setState({alertHidden: false});
-    }
-
-    componentWillReceiveProps() {
-        this.setState({alertHidden: false});
-    }
-
-    handleClose() {
-        this.setState({alertHidden: true});
-    }
-
-    render() {
-        var severity;
-        if(this.props.type == "Error") {
-            severity = "danger";
-        } else if(this.props.type == "Alert") {
-            severity = "warning";
-        }
-
-        return (
-            <div hidden={this.state.alertHidden} style={{"position": "relative"}}>
-                <Alert bsStyle={severity} className="alert alert-dismissible" onDismiss={this.handleClose.bind(this)}>
-                    <h4>{this.props.type}</h4>
-                    <p>{this.props.message}</p>
-                </Alert>
-            </div>
-        );
-    }
-}
-
 var appState = function(state) {
-    return {"notifications": state.errors}
+    return {"data": state.data}
 }
 
 export default connect(
     appState,
-    {}
+    {createLayer}
 )(App);
