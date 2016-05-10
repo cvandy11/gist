@@ -38,7 +38,6 @@ function deepDiff(o1, o2, p) {
 }
 
 var ProfilerMixin = ComposedComponent => class extends React.Component {
-
     constructor(props) {
         super(props);
     }
@@ -46,7 +45,7 @@ var ProfilerMixin = ComposedComponent => class extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         deepDiff({props: prevProps, state: prevState},
                 {props: this.props, state: this.state},
-                this.constructor.displayName);
+                ComposedComponent.constructor.displayName);
     }
 
     render() {

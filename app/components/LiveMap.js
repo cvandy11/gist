@@ -54,15 +54,11 @@ class LiveMap extends React.Component {
     //fired whenever there is a click event on the map
     //type, coords, properties passed to server for saving/redrawing
     onMapClick(e) {
-      console.log(e);
         if(this.props.controls.tool.type != "Eraser" && this.props.controls.tool.type != "") {
             if(e.latlng.lat >= -85 && e.latlng.lat <= 85 && e.latlng.lng >= -180 && e.latlng.lng <= 180){
                if(this.props.controls.tool.twoPoint){
                   this.state.coordList.push(e.latlng);
-                  console.log("coord list is");
-                  console.log(this.state.coordList);
                   if( this.state.coordList.length>= 2){
-                     console.log("attempted to insert rectangle");
                      var insertObject = {coords:this.state.coordList};
                      this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: insertObject, properties: this.props.controls.tool.properties});
                     this.state.coordList.splice(0,2);
@@ -75,7 +71,6 @@ class LiveMap extends React.Component {
     }
 
     handleElementClick(e) {
-         console.log(e.target);
         if(this.props.controls.tool.type == "Eraser" && e.target.options.layerID==this.props.controls.active_layer) {
             this.props.deleteObject(e.target.options.id);
         }
@@ -85,7 +80,7 @@ class LiveMap extends React.Component {
         const position = [48.73205, -122.48627];
 	    const bounds = [ [-120,-220], [120,220] ];
 
-        var layerGroups = {CAP:[]};
+        var layerGroups={};
 
         //building the list of all objects that are in the reducer
         Object.keys(this.props.draw.objects).map(function(object_id, i) {
@@ -93,47 +88,60 @@ class LiveMap extends React.Component {
             if(!layerGroups[obj.layer_id]) layerGroups[obj.layer_id] = [];
             switch(obj.type) {
                 case("Circle"):
-                    //layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} onClick={this.handleElementClick} layerID={obj.layer_id} ></Circle>);
                     layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth} onClick={this.handleElementClick} layerID={obj.layer_id} ></Circle>);
                     break;
                 case("Rectangle"):
                     layerGroups[obj.layer_id].push(<Rectangle key={i} id={obj.object_id} bounds={obj.coordinates.coords} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth}  onClick={this.handleElementClick} layerID={obj.layer_id} ></Rectangle>);
-                    //var rectCoords = [[obj.coordinates.coords[0].lat,obj.coordinates.coords[0].lng] ,[obj.coordinates.coords[1].lat, obj.coordinates.coords[1].lng]];
                     break;
 
                 default:
                     break;
             }
         }.bind(this));
-         
+
         //Insert capgrid
-//         if(minLayerNum != Number.POSITIVE_INFINITY){
-            var capGridArray = this.buildCapGrid();
-            layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray} color={"Red"} weight={2} ></MultiPolyline>)
-  //       }
+        var capGridArray = this.buildCapGrid();
         var layers = null;
 
         if(this.props.data.layers && Object.keys(this.props.data.layers).length > 0) {
             layers = Object.keys(this.props.data.layers).map(function(layer_id) {
                 return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{layerGroups[layer_id]}</FeatureGroup>;
             }.bind(this));
+
+            layers.push(<FeatureGroup ref="CAP" key={9999999}><MultiPolyline polylines={capGridArray} color={"Red"} weight={2}></MultiPolyline></FeatureGroup>);
         }
 
         if(this.state.rendered) {
             Object.keys(this.props.data.layers).map(function(id) {
                 var leaf = this.refs.map.getLeafletElement();
-                var layer = this.refs["layer-"+id].getLeafletElement();
+                if(typeof this.refs["layer-"+id] != "undefined") {
+                    var layer = this.refs["layer-"+id].getLeafletElement();
 
-                if(this.props.controls.visible_layers.indexOf(id) > -1) {
-                    if(!leaf.hasLayer(layer)) {
-                        leaf.addLayer(layer);
-                    }
-                } else {
-                    if(leaf.hasLayer(layer))  {
-                        leaf.removeLayer(layer);
+                    if(this.props.controls.visible_layers.indexOf(id) > -1) {
+                        if(!leaf.hasLayer(layer)) {
+                            leaf.addLayer(layer);
+                        }
+                    } else {
+                        if(leaf.hasLayer(layer))  {
+                            leaf.removeLayer(layer);
+                        }
                     }
                 }
             }.bind(this));
+
+            if(this.props.controls.visible_layers.indexOf("CAP") > -1) {
+                var leaf = this.refs.map.getLeafletElement();
+                var layer = this.refs["CAP"].getLeafletElement();
+                if(!leaf.hasLayer(layer)) {
+                    leaf.addLayer(layer);
+                }
+            } else {
+                var leaf = this.refs.map.getLeafletElement();
+                var layer = this.refs["CAP"].getLeafletElement();
+                if(leaf.hasLayer(layer))  {
+                    leaf.removeLayer(layer);
+                }
+            }
         }
 
         return (
@@ -162,7 +170,7 @@ const mapState = function(state) {
 }
 
 //connects the mapState, functions, and class together
-export default ProfilerMixin(connect(
+export default (connect(
     mapState,
     {insertObject, getMission, deleteObject}
 )(LiveMap));

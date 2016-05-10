@@ -29,14 +29,49 @@ function initSocket() {
 
     //event listener for when someone else inserts an object
     socket.on('object-inserted', function(data) {
-        console.log(data);
         store.dispatch({
             type: OBJECT_INSERTED,
             object: data
         });
     });
 
-    //TODO event listeners for mission created, mission archived, layer created, layer deleted, object deleted
+    socket.on('object-deleted', function(data) {
+        store.dispatch({
+            type: OBJECT_DELETED,
+            object_id: data
+        });
+    });
+
+    socket.on('layer-created', function(data) {
+        store.dispatch({
+            type: LAYER_CREATED,
+            layer: data
+        });
+    });
+
+    socket.on('layer-deleted', function(data) {
+        store.dispatch({
+            type: LAYER_DELETED,
+            layer_id: data
+        });
+    });
+
+
+    socket.on('mission-created', function(data) {
+        store.dispatch({
+            type: MISSION_CREATED,
+            mission: data
+        });
+
+    });
+
+    socket.on('mission-archived', function(data) {
+        store.dispatch({
+            type: MISSION_ARCHIVED,
+            mission_id: data
+        });
+
+    });
 }
 
 //function to tell the server when you inserted an object and the display on your map as well
@@ -118,7 +153,7 @@ function createLayer(layer) {
 //toggles delete layer
 function deleteLayer(layer_id) {
     return function(dispatch) {
-        socket.emit('toggle-layer-delete', {mission_id: mission_id, layer_id: layer_id}, function(data) {
+        socket.emit('toggle-layer-delete', {layer_id: layer_id}, function(data) {
             if(data.type == "error") {
                 dispatch({
                     type: ERROR,

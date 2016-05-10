@@ -104,6 +104,7 @@ app.io.route('create-mission', function(req) {
                         message: "There was a problem creating the mission"
                     });
                 } else {
+                    req.io.room('lobby').broadcast('mission-created', req.data.mission);
                     req.io.respond({
                         type: "success"
                     });
@@ -139,6 +140,7 @@ app.io.route('toggle-mission-archive', function(req) {
                 message: "There was a problem updating the database."
             });
         } else {
+            req.io.room('lobby').broadcast('mission-archived', req.data.mission_id);
             req.io.respond({
                 type: "success",
                 mission_id: req.data.mission_id
@@ -206,15 +208,15 @@ app.io.route('create-layer', function(req) {
 });
 
 //sets or unsetes delete flag for layer and updates room
-app.io.route('toggle-delete-layer', function(req) {
-    toggleDeleteLayer(req.data.mission_id, req.data.layer_id).then(function(data) {
+app.io.route('toggle-layer-delete', function(req) {
+    toggleDeleteLayer(req.data.layer_id).then(function(data) {
         if(!data) {
             req.io.respond({
                 type: "error",
                 message: "There was a problem with the layers in the database."
             });
         } else {
-            if(data.deleted) {
+            if(data) {
                 req.io.room(req.data.mission_id).broadcast('layer-deleted', req.data.layer_id);
             } else {
                 req.io.room(req.data.mission_id).broadcast('layer-created', data);
@@ -369,7 +371,7 @@ var getLayers = function(mission_id) {
 
 //toggles delete for the given layer on or off
 var toggleDeleteLayer = function(layer_id) {
-    var promise = db.none("UPDATE layer_info SET deleted = NOT deleted WHERE layer_id = $1", layer_id).then(function(data) {
+    var promise = db.one("UPDATE layer_info SET deleted = NOT deleted WHERE layer_id = $1 RETURNING *", layer_id).then(function(data) {
         return true;
     }).catch(function(error) {
         console.log("ERROR: " + error);
