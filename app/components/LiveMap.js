@@ -1,6 +1,7 @@
 import React from 'react';
 import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup, MultiPolyline, Rectangle} from 'react-leaflet';
 import {connect} from 'react-redux';
+import ProfilerMixin from './ProfilerMixin.js';
 
 import {insertObject, getMission, deleteObject} from '../actions/Connect.js';
 
@@ -161,7 +162,7 @@ const mapState = function(state) {
 }
 
 //connects the mapState, functions, and class together
-export default connect(
+export default ProfilerMixin(connect(
     mapState,
     {insertObject, getMission, deleteObject}
-)(LiveMap);
+)(LiveMap));

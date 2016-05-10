@@ -1,0 +1,7 @@
+{
+    "db_password": "m@ps&t!l3s",
+    "db_user": "gist",
+    "db_host": "127.0.0.1",
+    "db_port": "5432",
+    "db": "gist"
+}

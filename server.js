@@ -1,19 +1,17 @@
 'use strict';
 
 var path = require('path');
+var fs = require('fs');
 var express = require('express.io');
 var http = require('http');
-var webpack = require('webpack');
-var webpackMiddleware = require('webpack-dev-middleware');
-var webpackHotMiddleware = require('webpack-hot-middleware');
-var config = require('./webpack.config.js');
 var pgp = require("pg-promise")();
+var settings = require("./settings.json");
 
-var db = pgp("postgress://gist:m@ps&t!l3s@127.0.0.1:5432/gist");
+var db_url = "postgress://" + settings.db_user + ":" + settings.db_password + "@" + settings.db_host + ":" + settings.db_port + "/" + settings.db;
+var db = pgp(db_url);
 
-const isDeveloping = process.env.NODE_ENV !== 'production';
 var app = express().http().io();
-var port = isDeveloping ? process.env.PORT : 3000;
+var port = 3001;
 
 app.use(express.static(__dirname + '/dist'));
 
@@ -25,6 +23,13 @@ app.get('/mission/:mission_id', function(req, res) {
     res.sendfile(path.join(__dirname, 'dist/index.html'));
 });
 
+app.get('/download', function(req, res) {
+    var file = path.join(__dirname, 'gist-0.2.0.tar.gz');
+    res.setHeader('Content-disposition', 'attachment; filename=gist-0.2.0.tar.gz');
+    var filestream = fs.createReadStream(file);
+    filestream.pipe(res);
+});
+
 //SOCKET ROUTES
 
 app.io.route('ready', function(req) {
@@ -32,6 +37,7 @@ app.io.route('ready', function(req) {
 });
 
 app.io.route('get-mission-info', function(req) {
+    req.io.join(req.data.mission_id);
     getMissionInfo(req.data.mission_id).then(function(data) {
         if(!data) {
             req.io.respond({
@@ -49,6 +55,7 @@ app.io.route('get-mission-info', function(req) {
 
 //gets all active missions
 app.io.route('get-missions', function(req) {
+    req.io.join('lobby');
     getMissions().then(function(data) {
         if(!data) {
             req.io.respond({
