@@ -29,6 +29,7 @@ function initSocket() {
 
     //event listener for when someone else inserts an object
     socket.on('object-inserted', function(data) {
+        console.log(data);
         store.dispatch({
             type: OBJECT_INSERTED,
             object: data

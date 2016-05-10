@@ -10,7 +10,7 @@ module.exports = {
     path.join(__dirname, 'app/main.js')
   ],
   output: {
-    path: path.join(__dirname, '/build/'),
+    path: path.join(__dirname, './build'),
     filename: '[name].js',
     publicPath: '/'
   },
@@ -21,10 +21,10 @@ module.exports = {
         filename: 'index.html'
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('production')
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        'global': {}
     })
   ],
   module: {
