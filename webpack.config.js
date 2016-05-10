@@ -37,7 +37,10 @@ module.exports = {
         loader: 'json'
     }, {
         test: /\.css$/,
-        loader: 'style!css?modules&localIdentName=[name]---[local]---[hash:base64:5]'
+        loader: 'style-loader!css-loader'
+    }, {
+        test: /\.(png|ico)$/,
+        loader: 'url-loader?limit=8192'
     }
     ]
   }

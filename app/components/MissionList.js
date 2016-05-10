@@ -74,7 +74,7 @@ class MissionList extends React.Component {
                 </tr>
         }.bind(this));
 
-        return <div>
+        return <div className="mission_list">
             <Notification />
             <h1>Active Missions</h1>
             <Table striped condensed hover responsive>

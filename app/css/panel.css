@@ -1,0 +1,17 @@
+/* panel styling */
+
+.GenericPanel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 200px;
+    overflow: hidden;
+    padding: 5px 5px 5px 5px;
+
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+#base_tool {
+    position: relative;
+}
+

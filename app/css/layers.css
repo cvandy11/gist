@@ -1,0 +1,32 @@
+/* layer panel styling */
+
+.info {
+    border-bottom: 1px solid gray;
+}
+.info p {
+    text-align: center;
+    color: white;
+    line-height: 24px;
+}
+#info_id {
+    font-size: 28px;
+}
+#info_description { }
+#info_center { }
+
+#layers { }
+.list-group-item { }
+.layer-visible-button { float: left; }
+.active-layer-clickable {
+    display: inline-block;
+    overflow: hidden;
+}
+
+#baseLayers {
+    position: absolute;
+    bottom: 0;
+}
+
+.hidden { display: none; }
+.visible { }
+
