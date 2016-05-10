@@ -175,6 +175,22 @@ const Circle = {
     description: "A circle with diameter in miles and drawn in the given color."
 };
 
+const Line = {
+   type: "Line",
+   twoPoint: true,
+   preserveLast: true,
+   properties:{
+      color: "blue",
+      strokeWidth: 5
+   },
+   options: [
+      <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} key={1} />,
+      <Slider title={"Line Thickness"} min={1} max={25} step={1} defaultvalue={5} propKey={"strokeWidth"} key={2} />
+   ],
+   glyph: "glyphicon-pencil",
+   description: "A tool to draw lines"
+}
+
 const Rectangle = {
    type: "Rectangle",
    twoPoint: true,
@@ -205,7 +221,25 @@ const Erase = {
     description: "Click on elements on the map to erase them"
 }
 
+const Select = {
+   type: "Select",
+   twoPoint: false,
+   properties: null,
+   options: null,
+   glyph: "glyphicon-screenshot",
+   description: "Used to select previously drawn objects to edit them"
+}
+
+const Done = {
+   type: "Done",
+   twoPoint: false,
+   properties: null,
+   options: null,
+   glyph: "glyphicon-ok",
+   description: "Used to complete a tool such as Line and Polygon"
+}
+
 //list of all tools, used in rendering things
-const toolList = [Circle, Erase, Rectangle];
+const toolList = [Select, Erase, Line, Circle, Rectangle, Done];
 
 export default toolList;
