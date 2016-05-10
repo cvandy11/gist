@@ -54,7 +54,7 @@ class BaseTool extends React.Component{
 				    <Popover title={tool.type} id={1}>
 					    <strong>{tool.description}</strong>
 				    </Popover>}>
-				<Button bsStyle={bsStyle} onClick={this.select} block>
+				<Button bsStyle={bsStyle} onClick={this.select}>
 					<Glyphicon glyph={"glyphicon " + tool.glyph} />
                     {tool.type}
 				 </Button>

@@ -86,9 +86,15 @@ class LiveMap extends React.Component {
         return (
             <Map center={position} worldCopyJump={false} zoom={this.props.controls.mapData.maxZoom} minZoom={2} maxBounds={bounds} zoomControl={false} onClick={this.onMapClick.bind(this)} ref='map'>
                 <TileLayer
-                    maxZoom={this.props.controls.mapData.maxZoom}
-                    url={this.props.controls.mapData.url}
-                    attribution='&copy; <a href="https://skyvector.com/">SkyVector</a> | &copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+                    maxZoom={18}
+                    url='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+                    noWrap={true}
+                />
+                <TileLayer
+                    maxZoom={11}
+                    url='https://t.skyvector.com/9c82561433a66/vfr/1605/{z}/{x}/{y}.jpg'
+                    attribution='&copy; <a href="https://skyvector.com/">SkyVector</a>'
                     noWrap={true}
                 />
                 { layers }

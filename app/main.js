@@ -1,4 +1,5 @@
 import "babel-polyfill";
+require('./css/import.css');
 
 import {Route, browserHistory, Router} from 'react-router';
 import {syncHistoryWithStore} from 'react-router-redux';

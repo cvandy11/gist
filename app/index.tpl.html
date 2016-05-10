@@ -1,115 +1,17 @@
 <!doctype html>
 <html lang="en">
     <head>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie-edge">
         <title>WebGIS</title>
         <meta name="description" content="A web gis application demo">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="./images/favicon.ico" type="image/x-icon" />
+
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-        <script src="/socket.io/socket.io.js"></script>
-	<style>
-	* {
-		margin: 0;
-		padding: 0;
-	}
-
-	#map1 {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-	}
-
-   .GenericPanel{
-	position: absolute;
-	bottom: 0;
-	max-width: 25vw;
-	width: auto;
-	min-width: 5vw;
-	top: 0;
-	padding: 3px;
-	overflow: auto;
-	background-color:rgba(0,0,0,0.7);
-
-    }
-
-    #base_tool{
-        position: relative;
-	margin-top: 0;
-        margin-left: 5px;
-	margin-right: 5px;
-    }
-
-    div.leaflet-top.leaflet-left {
-        left: 150px;
-    }
-
-    div.leaflet-bottom.leaflet-right {
-	    right: 150px;
-    }
-
-    #notification_banner {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-        overflow: hidden;
-    }
-
-	.info {
-		border-bottom: 1px solid gray;
-	}
-	.info p {
-		text-align: center;
-		color: white;
-        line-height: 24px;
-        margin: 0 0 6px 0;
-	}
-	#info_id {
-		font-size: 28px;
-	}
-	#info_description {
-
-	}
-    #info_center {
-
-    }
-    #layers {
-
-    }
-    #baseLayers {
-        position: absolute;
-        bottom: 0;
-    }
-	.list-group-item {
-
-    }
-
-    .layer-visibile-button {
-        float: left;
-    }
-
-    .active-layer-clickable {
-        display: inline-block;
-        height: 100%;
-        width: 85px;
-        margin: 5px 5px;
-        overflow: hidden;
-    }
-
-    .hidden {
-        display: none;
-    }
-
-    .visible {
-    }
-
-	</style>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     </head>
+
     <body>
         <div id="root"></div>
     </body>

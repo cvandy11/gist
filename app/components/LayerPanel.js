@@ -19,7 +19,7 @@ class LayerPanel extends React.Component {
 		return (
             <div className="layer_panel">
                 <Info mission_id={this.props.data.mission_info.mission_id} mission_description={this.props.data.mission_info.mission_description} center={this.props.data.mission_info.center} />
-                <Button onClick={this.props.createLayer}>Create Layer</Button>
+                <Button bsStyle="default" onClick={this.props.createLayer} block>Create Layer</Button>
                 <Layers layers={this.props.data.layers} missionId={this.props.data.mission_info.mission_id} selectLayer={this.props.selectLayer} toggleLayer={this.props.toggleLayer} getLayerObjects={this.props.getLayerObjects} defaultLayer={this.props.data.default_layer} />
                 <BaseLayer changeBase={this.props.changeBase} />
             </div>
@@ -35,7 +35,7 @@ class Info extends React.Component {
 	render() {
 		return 	<div className="info">
 				<p><span id="info_id">{this.props.mission_id}</span><br />
-				<span id="info_description">{this.props.mission_description}</span>
+				<span id="info_description">{this.props.mission_description}</span><br />
 				<Button bsStyle="primary" bsSize="xsmall">{this.props.center.lat}, {this.props.center.lng}</Button></p>
 			</div>
 	}
@@ -48,6 +48,7 @@ class BaseLayer extends React.Component {
 
     componentWillMount() {
         this.setState({
+        /* get these out of here - they're now defined as layers for Leaflet directly - swap between those */
         objects : {
             VFR: {
                 mapType: "VFR",
@@ -65,6 +66,8 @@ class BaseLayer extends React.Component {
         });
     }
 
+
+    /* make this onclick change between the layers imported into leaflet, not change the props of the map */
     onclick(e) {
         if(e.target.id != this.state.active) {
             this.setState({active: e.target.id}, function() {
@@ -153,7 +156,7 @@ class Layers extends React.Component {
 
 			return (
 				<ListGroupItem
-					data-id={ i } key={ i } draggable="true"
+					data-id={ i } key={ i }
 					bsStyle={style} active={active}>
                             <Button className="layer-visible-button" bsSize="xsmall" onClick={this.toggleLayerVisibility(layer_id).bind(this)}><Glyphicon glyph={glyphicon} /></Button>
                             <span className="active-layer-clickable" onClick={this.toggleLayerActive(layer_id).bind(this)}> {layer.layer_name}</span>
