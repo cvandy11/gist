@@ -37,17 +37,26 @@ class LiveMap extends React.Component {
       var numCol = 32;
       var numRow = 18;
       var lineArray=[];
+      var quadArray=[];
       //do rows.
       for (var i = 0; i <= numRow; i++){
          var pushObject = [[startLatlng[0]-(0.25*i),startLatlng[1]],[startLatlng[0]-(0.25*i),startLatlng[1]+(numCol*0.25)]];
+         if(i>0){
+            var quadObj = [[startLatlng[0]-(0.25*(i-1))-0.125,startLatlng[1]],[startLatlng[0]-(0.25*(i-1)) -0.125,startLatlng[1]+(numCol*0.25)]];
+            quadArray.push(quadObj);
+         }
          lineArray.push(pushObject);
       }
       //Do columns
       for(var i = 0; i <= numCol; i++){
          var pushObject = [[startLatlng[0],startLatlng[1]+(0.25*i)],[startLatlng[0]-(0.25*numRow),startLatlng[1]+(0.25*i)]];
+         if(i>0){
+            var quadObj = [[(startLatlng[0]),(startLatlng[1]+(0.25*(i-1))+0.125)],[(startLatlng[0]-(0.25*numRow)),(startLatlng[1]+(0.25*(i-1))+0.125)]];
+            quadArray.push(quadObj);
+         }
          lineArray.push(pushObject);
       }
-      return lineArray;
+      return [lineArray, quadArray];
    }
 
     //fired whenever there is a click event on the map
@@ -109,7 +118,8 @@ class LiveMap extends React.Component {
         //Insert capgrid
 //         if(minLayerNum != Number.POSITIVE_INFINITY){
             var capGridArray = this.buildCapGrid();
-            layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray} color={"Red"} weight={2} ></MultiPolyline>)
+            layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[0]} color={"Red"} weight={2} clickable={false}></MultiPolyline>);
+            layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[1]} color={"Red"} weight={2} opacity={0.2} clickable={false}></MultiPolyline>);
   //       }
         var layers = null;
 
