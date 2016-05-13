@@ -1,4 +1,5 @@
 import React from 'react';
+import {divIcon} from 'leaflet';
 import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup, MultiPolyline, Rectangle, Polyline} from 'react-leaflet';
 import {connect} from 'react-redux';
 
@@ -107,8 +108,25 @@ class LiveMap extends React.Component {
                     layerGroups[obj.layer_id].push(<Rectangle key={i} id={obj.object_id} bounds={obj.coordinates.coords} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth}  onClick={this.handleElementClick} layerID={obj.layer_id} ></Rectangle>);
                     break;
                 case("Line"):
-                    layerGroups[obj.layer_id].push(<Polyline key={i} id={obj.object_id} positions={obj.coordinates.coords} color={obj.properties.color} weight={obj.properties.strokeWidth} onclick={this.handleElementClick} layerID={obj.layer_id}></Polyline>);
+                    layerGroups[obj.layer_id].push(<Polyline key={i} id={obj.object_id} positions={obj.coordinates.coords} color={obj.properties.color} weight={obj.properties.strokeWidth} onClick={this.handleElementClick} layerID={obj.layer_id}></Polyline>);
                     break;
+                case("Note"):
+                    var htmlString = '<span class="glyphicon '+obj.properties.icon+'"'+' style="color:'+obj.properties.color+';font-size:'+obj.properties.fontsize+'"></span>'
+                    var myIcon = divIcon({
+                     iconAnchor: obj.coordinates,
+                    // iconSize: obj.properties.size,
+                     html: htmlString
+                    });
+
+                    layerGroups[obj.layer_id].push(
+                    <Marker key={i} id={obj.object_id} position={obj.coordinates}  icon={myIcon} onClick={this.handleElementClick} layerID={obj.layer_id}>
+                     <Popup>
+                        <span>{obj.properties.text}</span>
+                     </Popup>
+                    </Marker>
+                    );
+                    break;
+
                 default:
                     break;
             }
@@ -116,8 +134,8 @@ class LiveMap extends React.Component {
          
         //Insert capgrid
         var capGridArray = this.state.CapGrid;
-        layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[0]} color={"Red"} weight={2} clickable={false}></MultiPolyline>);
-        layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[1]} color={"Red"} weight={2} opacity={0.2} clickable={false}></MultiPolyline>);
+        layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[0]} color={"Red"} weight={2} clickable={false} key={1}></MultiPolyline>);
+        layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[1]} color={"Red"} weight={2} opacity={0.2} clickable={false} key={2}></MultiPolyline>);
         var layers = null;
 
         if(this.props.data.layers && Object.keys(this.props.data.layers).length > 0) {

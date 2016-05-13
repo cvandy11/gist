@@ -117,6 +117,30 @@ class ToggleBox extends React.Component {
 
 }
 
+class TextInput extends React.Component{
+
+   constructor(props){
+      super(props);
+   }
+
+   updateText(e){
+      store.dispatch(updateToolProperties({[this.props.propKey]:e.target.value}));
+   }
+
+   render(){
+      return <Grid className="info" style={{width:"100%"}}>
+               <Row>
+                  <p>{this.props.title}</p>
+               </Row>
+               <Row>
+                  <input type="text" onChange={this.updateText.bind(this)} />
+               </Row>
+             </Grid>
+
+   }
+
+}
+
 //DEFINITION OF TOOLS
 /*
  / To define a tool object create and object with type, properties, and options
@@ -142,8 +166,8 @@ const colorDefinitions = [
 ];
 
 const iconToolDefs = [
-   {"Plane": "glyphicon-plane"},
    {"Comment": "glyphicon-comment"},
+   {"Plane": "glyphicon-plane"},
    {"Check": "glyphicon-ok"},
    {"X": "glyphicon-remove"},
    {"Person": "glyphicon-user"},
@@ -166,14 +190,32 @@ const Circle = {
     options: [
         <Slider title={"Diameter"} min={0.5} max={20} step={0.5} defaultValue={2} propKey={"radius"} toMeter={true} key={1} />,
         <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} key={2} />,
-        <ToggleBox title={"Fill?"} propKey={"fill"} key={3} />,
+        <ToggleBox title={"Apply Fill"} propKey={"fill"} key={3} />,
         <Dropdown title={"FillColor"} colors={colorDefinitions} propKey={"fillColor"} key={4} />,
-        <ToggleBox title={"Stroke?"} propKey={"stroke"} key={5} />,
+        <ToggleBox title={"Apply Stroke"} propKey={"stroke"} key={5} />,
         <Slider title={"Stroke Pixels"} min={1} max={25} step={1} defaultValue={5} propKey={"strokeWidth"} toMeter={false} key={6} />
     ],
     glyph: "glyphicon-record",
     description: "A circle with diameter in miles and drawn in the given color."
 };
+
+const Note = {
+   type: "Note",
+   twoPoint: false,
+   properties:{
+      color: "blue",
+      fontsize:"24pt",
+      icon: "glypicon-comment",
+      text: ""
+   },
+   options: [
+      <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} key={1}/>,
+      <Dropdown title={"Icon"} colors={iconToolDefs} propKey={"icon"} key={2}/>,
+      <TextInput title={"Text"}  propKey={"text"} key={3}/>
+   ],
+   glyph: "glyphicon-pushpin",
+   description: "A tool to place icons on the map with on click text notes"
+}
 
 const Line = {
    type: "Line",
@@ -203,9 +245,9 @@ const Rectangle = {
    },
    options: [
       <Dropdown title={"Stroke Color"} colors={colorDefinitions} propKey={"color"} key={1} />,
-      <ToggleBox title={"Fill?"} propKey={"fill"} key={2} />,
+      <ToggleBox title={"Apply Fill"} propKey={"fill"} key={2} />,
       <Dropdown title={"Fill Color"} colors={colorDefinitions} propKey={"fillColor"} key={3} />,
-      <ToggleBox title={"Stroke?"} propKey={"stroke"} key={4} />,
+      <ToggleBox title={"Apply Stroke"} propKey={"stroke"} key={4} />,
       <Slider title={"Stroke Width"} min={1} max={25} step={1} defaultValue={5} propKey={"strokeWidth"} key={5} />
    ],
    glyph:"glyphicon-unchecked",
@@ -240,6 +282,6 @@ const Done = {
 }
 
 //list of all tools, used in rendering things
-const toolList = [Select, Erase, Line, Circle, Rectangle, Done];
+const toolList = [Select, Erase, Note, Line, Circle, Rectangle, Done];
 
 export default toolList;
