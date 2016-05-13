@@ -15,6 +15,7 @@ class LiveMap extends React.Component {
             rendered: false,
             coordList:[]
         });
+        this.buildCapGrid();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -46,7 +47,7 @@ class LiveMap extends React.Component {
             quadArray.push(quadObj);
          }
          lineArray.push(pushObject);
-      }
+         }
       //Do columns
       for(var i = 0; i <= numCol; i++){
          var pushObject = [[startLatlng[0],startLatlng[1]+(0.25*i)],[startLatlng[0]-(0.25*numRow),startLatlng[1]+(0.25*i)]];
@@ -56,7 +57,7 @@ class LiveMap extends React.Component {
          }
          lineArray.push(pushObject);
       }
-      return [lineArray, quadArray];
+      this.setState({CapGrid: [lineArray, quadArray]});
    }
 
     //fired whenever there is a click event on the map
@@ -90,7 +91,7 @@ class LiveMap extends React.Component {
 
     render() {
         const position = [48.73205, -122.48627];
-	    const bounds = [ [-120,-220], [120,220] ];
+        const bounds = [ [-120,-220], [120,220] ];
 
         var layerGroups = {CAP:[]};
 
@@ -100,12 +101,10 @@ class LiveMap extends React.Component {
             if(!layerGroups[obj.layer_id]) layerGroups[obj.layer_id] = [];
             switch(obj.type) {
                 case("Circle"):
-                    //layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} onClick={this.handleElementClick} layerID={obj.layer_id} ></Circle>);
                     layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth} onClick={this.handleElementClick} layerID={obj.layer_id} ></Circle>);
                     break;
                 case("Rectangle"):
                     layerGroups[obj.layer_id].push(<Rectangle key={i} id={obj.object_id} bounds={obj.coordinates.coords} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth}  onClick={this.handleElementClick} layerID={obj.layer_id} ></Rectangle>);
-                    //var rectCoords = [[obj.coordinates.coords[0].lat,obj.coordinates.coords[0].lng] ,[obj.coordinates.coords[1].lat, obj.coordinates.coords[1].lng]];
                     break;
                 case("Line"):
                     layerGroups[obj.layer_id].push(<Polyline key={i} id={obj.object_id} positions={obj.coordinates.coords} color={obj.properties.color} weight={obj.properties.strokeWidth} onclick={this.handleElementClick} layerID={obj.layer_id}></Polyline>);
@@ -116,11 +115,9 @@ class LiveMap extends React.Component {
         }.bind(this));
          
         //Insert capgrid
-//         if(minLayerNum != Number.POSITIVE_INFINITY){
-            var capGridArray = this.buildCapGrid();
-            layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[0]} color={"Red"} weight={2} clickable={false}></MultiPolyline>);
-            layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[1]} color={"Red"} weight={2} opacity={0.2} clickable={false}></MultiPolyline>);
-  //       }
+        var capGridArray = this.state.CapGrid;
+        layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[0]} color={"Red"} weight={2} clickable={false}></MultiPolyline>);
+        layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[1]} color={"Red"} weight={2} opacity={0.2} clickable={false}></MultiPolyline>);
         var layers = null;
 
         if(this.props.data.layers && Object.keys(this.props.data.layers).length > 0) {
