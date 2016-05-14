@@ -111,10 +111,10 @@ class LiveMap extends React.Component {
                     layerGroups[obj.layer_id].push(<Polyline key={i} id={obj.object_id} positions={obj.coordinates.coords} color={obj.properties.color} weight={obj.properties.strokeWidth} onClick={this.handleElementClick} layerID={obj.layer_id}></Polyline>);
                     break;
                 case("Note"):
-                    var htmlString = '<span class="glyphicon '+obj.properties.icon+'"'+' style="color:'+obj.properties.color+';font-size:'+obj.properties.fontsize+'"></span>'
+                    var htmlString = '<span id  class="glyphicon '+obj.properties.icon+' map-divicons"'+' style="color:'+obj.properties.color+';font-size:'+obj.properties.fontsize+'"></span>'
                     var myIcon = divIcon({
-                     iconAnchor: obj.coordinates,
-                    // iconSize: obj.properties.size,
+                    //iconAnchor: obj.coordinates,
+                    //iconSize: [10,10],
                      html: htmlString
                     });
 

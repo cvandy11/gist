@@ -205,7 +205,7 @@ const Note = {
    properties:{
       color: "blue",
       fontsize:"24pt",
-      icon: "glypicon-comment",
+      icon: "glyphicon-comment",
       text: ""
    },
    options: [
