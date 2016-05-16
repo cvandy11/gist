@@ -1,5 +1,6 @@
 import React from 'react';
-import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup, MultiPolyline, Rectangle} from 'react-leaflet';
+import {divIcon} from 'leaflet';
+import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup, MultiPolyline, Rectangle, Polyline} from 'react-leaflet';
 import {connect} from 'react-redux';
 
 import {insertObject, getMission, deleteObject} from '../actions/Connect.js';
@@ -15,6 +16,7 @@ class LiveMap extends React.Component {
             rendered: false,
             coordList:[]
         });
+        this.buildCapGrid();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -37,34 +39,43 @@ class LiveMap extends React.Component {
       var numCol = 32;
       var numRow = 18;
       var lineArray=[];
+      var quadArray=[];
       //do rows.
       for (var i = 0; i <= numRow; i++){
          var pushObject = [[startLatlng[0]-(0.25*i),startLatlng[1]],[startLatlng[0]-(0.25*i),startLatlng[1]+(numCol*0.25)]];
+         if(i>0){
+            var quadObj = [[startLatlng[0]-(0.25*(i-1))-0.125,startLatlng[1]],[startLatlng[0]-(0.25*(i-1)) -0.125,startLatlng[1]+(numCol*0.25)]];
+            quadArray.push(quadObj);
+         }
          lineArray.push(pushObject);
-      }
+         }
       //Do columns
       for(var i = 0; i <= numCol; i++){
          var pushObject = [[startLatlng[0],startLatlng[1]+(0.25*i)],[startLatlng[0]-(0.25*numRow),startLatlng[1]+(0.25*i)]];
+         if(i>0){
+            var quadObj = [[(startLatlng[0]),(startLatlng[1]+(0.25*(i-1))+0.125)],[(startLatlng[0]-(0.25*numRow)),(startLatlng[1]+(0.25*(i-1))+0.125)]];
+            quadArray.push(quadObj);
+         }
          lineArray.push(pushObject);
       }
-      return lineArray;
+      this.setState({CapGrid: [lineArray, quadArray]});
    }
 
     //fired whenever there is a click event on the map
     //type, coords, properties passed to server for saving/redrawing
     onMapClick(e) {
-      console.log(e);
         if(this.props.controls.tool.type != "Eraser" && this.props.controls.tool.type != "") {
             if(e.latlng.lat >= -85 && e.latlng.lat <= 85 && e.latlng.lng >= -180 && e.latlng.lng <= 180){
                if(this.props.controls.tool.twoPoint){
                   this.state.coordList.push(e.latlng);
-                  console.log("coord list is");
-                  console.log(this.state.coordList);
                   if( this.state.coordList.length>= 2){
-                     console.log("attempted to insert rectangle");
                      var insertObject = {coords:this.state.coordList};
                      this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: insertObject, properties: this.props.controls.tool.properties});
-                    this.state.coordList.splice(0,2);
+                     if(this.props.controls.tool.preserveLast === true){
+                        this.state.coordList.splice(0,1);
+                     } else {
+                        this.state.coordList.splice(0,2);
+                     }
                   }
                } else {
                   this.props.insertObject({mission_id: this.props.data.mission_info.mission_id, layer_id: this.props.controls.active_layer, type:this.props.controls.tool.type, coordinates: e.latlng, properties: this.props.controls.tool.properties});
@@ -74,7 +85,6 @@ class LiveMap extends React.Component {
     }
 
     handleElementClick(e) {
-         console.log(e.target);
         if(this.props.controls.tool.type == "Eraser" && e.target.options.layerID==this.props.controls.active_layer) {
             this.props.deleteObject(e.target.options.id);
         }
@@ -82,7 +92,7 @@ class LiveMap extends React.Component {
 
     render() {
         const position = [48.73205, -122.48627];
-	    const bounds = [ [-120,-220], [120,220] ];
+        const bounds = [ [-120,-220], [120,220] ];
 
         var layerGroups = {CAP:[]};
 
@@ -92,12 +102,29 @@ class LiveMap extends React.Component {
             if(!layerGroups[obj.layer_id]) layerGroups[obj.layer_id] = [];
             switch(obj.type) {
                 case("Circle"):
-                    //layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} onClick={this.handleElementClick} layerID={obj.layer_id} ></Circle>);
                     layerGroups[obj.layer_id].push(<Circle key={i} id={obj.object_id} center={obj.coordinates} radius={obj.properties.radius} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth} onClick={this.handleElementClick} layerID={obj.layer_id} ></Circle>);
                     break;
                 case("Rectangle"):
                     layerGroups[obj.layer_id].push(<Rectangle key={i} id={obj.object_id} bounds={obj.coordinates.coords} color={obj.properties.color} fill={obj.properties.fill} fillColor={obj.properties.fillColor} stroke={obj.properties.stroke} weight={obj.properties.strokeWidth}  onClick={this.handleElementClick} layerID={obj.layer_id} ></Rectangle>);
-                    //var rectCoords = [[obj.coordinates.coords[0].lat,obj.coordinates.coords[0].lng] ,[obj.coordinates.coords[1].lat, obj.coordinates.coords[1].lng]];
+                    break;
+                case("Line"):
+                    layerGroups[obj.layer_id].push(<Polyline key={i} id={obj.object_id} positions={obj.coordinates.coords} color={obj.properties.color} weight={obj.properties.strokeWidth} onClick={this.handleElementClick} layerID={obj.layer_id}></Polyline>);
+                    break;
+                case("Note"):
+                    var htmlString = '<span id  class="glyphicon '+obj.properties.icon+' map-divicons"'+' style="color:'+obj.properties.color+';font-size:'+obj.properties.fontsize+'"></span>'
+                    var myIcon = divIcon({
+                    //iconAnchor: obj.coordinates,
+                    //iconSize: [10,10],
+                     html: htmlString
+                    });
+
+                    layerGroups[obj.layer_id].push(
+                    <Marker key={i} id={obj.object_id} position={obj.coordinates}  icon={myIcon} onClick={this.handleElementClick} layerID={obj.layer_id}>
+                     <Popup>
+                        <span>{obj.properties.text}</span>
+                     </Popup>
+                    </Marker>
+                    );
                     break;
 
                 default:
@@ -106,10 +133,9 @@ class LiveMap extends React.Component {
         }.bind(this));
          
         //Insert capgrid
-//         if(minLayerNum != Number.POSITIVE_INFINITY){
-            var capGridArray = this.buildCapGrid();
-            layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray} color={"Red"} weight={2} ></MultiPolyline>)
-  //       }
+        var capGridArray = this.state.CapGrid;
+        layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[0]} color={"Red"} weight={2} clickable={false} key={1}></MultiPolyline>);
+        layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[1]} color={"Red"} weight={2} opacity={0.2} clickable={false} key={2}></MultiPolyline>);
         var layers = null;
 
         if(this.props.data.layers && Object.keys(this.props.data.layers).length > 0) {
