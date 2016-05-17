@@ -144,8 +144,7 @@ class LiveMap extends React.Component {
                 return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{layerGroups[layer_id]}</FeatureGroup>;
             }.bind(this));
 
-            layers.push(<FeatureGroup ref="CAP" key={9999999}><MultiPolyline polylines={capGridArray[0]} color={"Red"} clickable={false} weight={2}></MultiPolyline></FeatureGroup>);
-            layers.push(<FeatureGroup ref="CAP" key={9999998}><MultiPolyline polylines={capGridArray[1]} color={"Red"} clickable={false} weight={2} opacity={0.2}></MultiPolyline></FeatureGroup>);
+            layers.push(<FeatureGroup ref="CAP" key={9999999}><MultiPolyline polylines={capGridArray[0]} color={"Red"} clickable={false} weight={2}></MultiPolyline><MultiPolyline polylines={capGridArray[1]} color={"Red"} clickable={false} weight={2} opacity={0.2}></MultiPolyline></FeatureGroup>);
         }
 
         if(this.state.rendered) {
