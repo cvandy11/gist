@@ -7,11 +7,12 @@ var http = require('http');
 var pgp = require("pg-promise")();
 var settings = require("./settings.json");
 
+const isDeveloping = process.env.NODE_ENV !== 'production';;
 var db_url = "postgress://" + settings.db_user + ":" + settings.db_password + "@" + settings.db_host + ":" + settings.db_port + "/" + settings.db;
 var db = pgp(db_url);
 
 var app = express().http().io();
-var port = 3001;
+var port = isDeveloping ? process.env.PORT: 3000;
 
 app.use(express.static(__dirname + '/dist'));
 

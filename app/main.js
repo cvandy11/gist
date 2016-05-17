@@ -3,7 +3,7 @@ require('./css/import.css');
 
 import {Route, browserHistory, Router} from 'react-router';
 import {syncHistoryWithStore} from 'react-router-redux';
-import { Provider } from 'react-redux';
+import {Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
