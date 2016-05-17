@@ -17,6 +17,7 @@
 #layers { }
 .list-group-item { }
 .layer-visible-button { float: left; }
+.layer-delete-button { float: right; }
 .active-layer-clickable {
     display: inline-block;
     overflow: hidden;

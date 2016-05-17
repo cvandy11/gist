@@ -4,7 +4,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import {Modal, ButtonGroup, Button, ListGroup, ListGroupItem, Input, Glyphicon, Grid, Row, Col} from "react-bootstrap";
-import {getLayerObjects} from '../actions/Connect.js';
+import {getLayerObjects, deleteLayer} from '../actions/Connect.js';
 import {changeBase, selectLayer, toggleLayer} from "../actions/Controls.js";
 
 class LayerPanel extends React.Component {
@@ -20,7 +20,8 @@ class LayerPanel extends React.Component {
             <div className="layer_panel">
                 <Info mission_id={this.props.data.mission_info.mission_id} mission_description={this.props.data.mission_info.mission_description} center={this.props.data.mission_info.center} />
                 <Button bsStyle="default" onClick={this.props.createLayer} block>Create Layer</Button>
-                <Layers layers={this.props.data.layers} missionId={this.props.data.mission_info.mission_id} selectLayer={this.props.selectLayer} toggleLayer={this.props.toggleLayer} getLayerObjects={this.props.getLayerObjects} defaultLayer={this.props.data.default_layer} />
+                <Layers layers={this.props.data.layers} missionId={this.props.data.mission_info.mission_id} selectLayer={this.props.selectLayer} toggleLayer={this.props.toggleLayer} getLayerObjects={this.props.getLayerObjects} defaultLayer={this.props.data.default_layer} removeLayer={this.props.deleteLayer} />
+                <CapGridToggle toggleLayer={this.props.toggleLayer} />
                 <BaseLayer changeBase={this.props.changeBase} />
             </div>
 		)
@@ -144,6 +145,11 @@ class Layers extends React.Component {
         }
     }
 
+    deleteLayer(layer_id) {
+        return function() {
+            this.props.removeLayer(layer_id);
+        }
+    }
 
     //The most likely cause of the invariant violation, says something is undefined, not sure what
     //gives invariant violation on the getLayers action function, not sure why...it dispatch correctly, i think
@@ -160,6 +166,7 @@ class Layers extends React.Component {
 					bsStyle={style} active={active}>
                             <Button className="layer-visible-button" bsSize="xsmall" onClick={this.toggleLayerVisibility(layer_id).bind(this)}><Glyphicon glyph={glyphicon} /></Button>
                             <span className="active-layer-clickable" onClick={this.toggleLayerActive(layer_id).bind(this)}> {layer.layer_name}</span>
+                            <Button className="layer-delete-button" bsSize="xsmall" onClick={this.deleteLayer(layer_id).bind(this)}><Glyphicon glyph="glyphicon glyphicon-remove" /></Button>
 				</ListGroupItem>
 			);
 		}.bind(this));
@@ -168,11 +175,29 @@ class Layers extends React.Component {
 	}
 }
 
+class CapGridToggle extends React.Component {
+    constructor(props) {
+        super(props);
+        this.toggle = this.toggle.bind(this);
+    }
+
+    toggle() {
+        this.props.toggleLayer("CAP");
+    }
+
+    render() {
+        return <div>
+            <input defaultChecked type="checkbox" onClick={this.toggle} />
+            <span style={{color:"white"}}>Cap Grid</span>
+        </div>
+    }
+}
+
 var appState = function(state) {
     return {"data": state.data};
 }
 
 export default connect(
     appState,
-    {changeBase, selectLayer, toggleLayer, getLayerObjects}
+    {changeBase, selectLayer, toggleLayer, getLayerObjects, deleteLayer}
 )(LayerPanel);

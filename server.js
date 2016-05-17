@@ -1,19 +1,17 @@
 'use strict';
 
 var path = require('path');
+var fs = require('fs');
 var express = require('express.io');
 var http = require('http');
-var webpack = require('webpack');
-var webpackMiddleware = require('webpack-dev-middleware');
-var webpackHotMiddleware = require('webpack-hot-middleware');
-var config = require('./webpack.config.js');
 var pgp = require("pg-promise")();
+var settings = require("./settings.json");
 
-var db = pgp("postgress://gist:m@ps&t!l3s@127.0.0.1:5432/gist");
+var db_url = "postgress://" + settings.db_user + ":" + settings.db_password + "@" + settings.db_host + ":" + settings.db_port + "/" + settings.db;
+var db = pgp(db_url);
 
-const isDeveloping = process.env.NODE_ENV !== 'production';
 var app = express().http().io();
-var port = isDeveloping ? process.env.PORT : 3000;
+var port = 3001;
 
 app.use(express.static(__dirname + '/dist'));
 
@@ -25,6 +23,13 @@ app.get('/mission/:mission_id', function(req, res) {
     res.sendfile(path.join(__dirname, 'dist/index.html'));
 });
 
+app.get('/download', function(req, res) {
+    var file = path.join(__dirname, 'gist-0.2.0.tar.gz');
+    res.setHeader('Content-disposition', 'attachment; filename=gist-0.2.0.tar.gz');
+    var filestream = fs.createReadStream(file);
+    filestream.pipe(res);
+});
+
 //SOCKET ROUTES
 
 app.io.route('ready', function(req) {
@@ -32,6 +37,7 @@ app.io.route('ready', function(req) {
 });
 
 app.io.route('get-mission-info', function(req) {
+    req.io.join(req.data.mission_id);
     getMissionInfo(req.data.mission_id).then(function(data) {
         if(!data) {
             req.io.respond({
@@ -49,6 +55,7 @@ app.io.route('get-mission-info', function(req) {
 
 //gets all active missions
 app.io.route('get-missions', function(req) {
+    req.io.join('lobby');
     getMissions().then(function(data) {
         if(!data) {
             req.io.respond({
@@ -97,6 +104,7 @@ app.io.route('create-mission', function(req) {
                         message: "There was a problem creating the mission"
                     });
                 } else {
+                    req.io.room('lobby').broadcast('mission-created', req.data.mission);
                     req.io.respond({
                         type: "success"
                     });
@@ -132,6 +140,7 @@ app.io.route('toggle-mission-archive', function(req) {
                 message: "There was a problem updating the database."
             });
         } else {
+            req.io.room('lobby').broadcast('mission-archived', req.data.mission_id);
             req.io.respond({
                 type: "success",
                 mission_id: req.data.mission_id
@@ -199,15 +208,15 @@ app.io.route('create-layer', function(req) {
 });
 
 //sets or unsetes delete flag for layer and updates room
-app.io.route('toggle-delete-layer', function(req) {
-    toggleDeleteLayer(req.data.mission_id, req.data.layer_id).then(function(data) {
+app.io.route('toggle-layer-delete', function(req) {
+    toggleDeleteLayer(req.data.layer_id).then(function(data) {
         if(!data) {
             req.io.respond({
                 type: "error",
                 message: "There was a problem with the layers in the database."
             });
         } else {
-            if(data.deleted) {
+            if(data) {
                 req.io.room(req.data.mission_id).broadcast('layer-deleted', req.data.layer_id);
             } else {
                 req.io.room(req.data.mission_id).broadcast('layer-created', data);
@@ -362,7 +371,7 @@ var getLayers = function(mission_id) {
 
 //toggles delete for the given layer on or off
 var toggleDeleteLayer = function(layer_id) {
-    var promise = db.none("UPDATE layer_info SET deleted = NOT deleted WHERE layer_id = $1", layer_id).then(function(data) {
+    var promise = db.one("UPDATE layer_info SET deleted = NOT deleted WHERE layer_id = $1 RETURNING *", layer_id).then(function(data) {
         return true;
     }).catch(function(error) {
         console.log("ERROR: " + error);

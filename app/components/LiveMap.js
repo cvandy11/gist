@@ -2,6 +2,7 @@ import React from 'react';
 import {divIcon} from 'leaflet';
 import {Map, Marker, Popup, TileLayer, Circle, FeatureGroup, MultiPolyline, Rectangle, Polyline} from 'react-leaflet';
 import {connect} from 'react-redux';
+import ProfilerMixin from './ProfilerMixin.js';
 
 import {insertObject, getMission, deleteObject} from '../actions/Connect.js';
 
@@ -94,7 +95,7 @@ class LiveMap extends React.Component {
         const position = [48.73205, -122.48627];
         const bounds = [ [-120,-220], [120,220] ];
 
-        var layerGroups = {CAP:[]};
+        var layerGroups={};
 
         //building the list of all objects that are in the reducer
         Object.keys(this.props.draw.objects).map(function(object_id, i) {
@@ -131,7 +132,7 @@ class LiveMap extends React.Component {
                     break;
             }
         }.bind(this));
-         
+
         //Insert capgrid
         var capGridArray = this.state.CapGrid;
         layerGroups["CAP"].push(<MultiPolyline polylines={capGridArray[0]} color={"Red"} weight={2} clickable={false} key={1}></MultiPolyline>);
@@ -142,23 +143,41 @@ class LiveMap extends React.Component {
             layers = Object.keys(this.props.data.layers).map(function(layer_id) {
                 return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{layerGroups[layer_id]}</FeatureGroup>;
             }.bind(this));
+
+            layers.push(<FeatureGroup ref="CAP" key={9999999}><MultiPolyline polylines={capGridArray} color={"Red"} weight={2}></MultiPolyline></FeatureGroup>);
         }
 
         if(this.state.rendered) {
             Object.keys(this.props.data.layers).map(function(id) {
                 var leaf = this.refs.map.getLeafletElement();
-                var layer = this.refs["layer-"+id].getLeafletElement();
+                if(typeof this.refs["layer-"+id] != "undefined") {
+                    var layer = this.refs["layer-"+id].getLeafletElement();
 
-                if(this.props.controls.visible_layers.indexOf(id) > -1) {
-                    if(!leaf.hasLayer(layer)) {
-                        leaf.addLayer(layer);
-                    }
-                } else {
-                    if(leaf.hasLayer(layer))  {
-                        leaf.removeLayer(layer);
+                    if(this.props.controls.visible_layers.indexOf(id) > -1) {
+                        if(!leaf.hasLayer(layer)) {
+                            leaf.addLayer(layer);
+                        }
+                    } else {
+                        if(leaf.hasLayer(layer))  {
+                            leaf.removeLayer(layer);
+                        }
                     }
                 }
             }.bind(this));
+
+            if(this.props.controls.visible_layers.indexOf("CAP") > -1) {
+                var leaf = this.refs.map.getLeafletElement();
+                var layer = this.refs["CAP"].getLeafletElement();
+                if(!leaf.hasLayer(layer)) {
+                    leaf.addLayer(layer);
+                }
+            } else {
+                var leaf = this.refs.map.getLeafletElement();
+                var layer = this.refs["CAP"].getLeafletElement();
+                if(leaf.hasLayer(layer))  {
+                    leaf.removeLayer(layer);
+                }
+            }
         }
 
         return (
@@ -187,7 +206,7 @@ const mapState = function(state) {
 }
 
 //connects the mapState, functions, and class together
-export default connect(
+export default (connect(
     mapState,
     {insertObject, getMission, deleteObject}
-)(LiveMap);
+)(LiveMap));

@@ -8,7 +8,7 @@ export default function dataReducer(previousControlState, action) {
         return {
             missions : {},
             mission_info : {},
-            layers : {"CAP":[]},
+            layers : {},
             default_layer: -1
         };
     }
@@ -34,7 +34,7 @@ export default function dataReducer(previousControlState, action) {
             newState.layers[action.layer.layer_id] = action.layer;
             break;
         case LAYER_DELETED:
-            delete newState.layers[action.layer.layer_id];
+            delete newState.layers[action.layer_id];
             break;
         case LAYERS_RECEIVED:
             for(let layer of action.layers) {

@@ -10,7 +10,7 @@ module.exports = {
     path.join(__dirname, 'app/main.js')
   ],
   output: {
-    path: path.join(__dirname, '/build/'),
+    path: path.join(__dirname, './build'),
     filename: '[name].js',
     publicPath: '/'
   },
@@ -21,23 +21,26 @@ module.exports = {
         filename: 'index.html'
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('production')
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        'global': {}
     })
   ],
   module: {
     loaders: [{
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel'
+        loader: 'babel-loader'
     }, {
         test: /\.json?$/,
         loader: 'json'
     }, {
         test: /\.css$/,
-        loader: 'style!css?modules&localIdentName=[name]---[local]---[hash:base64:5]'
+        loader: 'style-loader!css-loader'
+    }, {
+        test: /\.(png|ico)$/,
+        loader: 'url-loader?limit=8192'
     }
     ]
   }
