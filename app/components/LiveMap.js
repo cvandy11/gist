@@ -160,9 +160,7 @@ class LiveMap extends React.Component {
             layers = Object.keys(this.props.data.layers).map(function(layer_id) {
                 return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{layerGroups[layer_id]}</FeatureGroup>;
             }.bind(this));
-            if(this.state.renderGrid){
-               layers.push(<FeatureGroup ref="CAP" key={9999999}><MultiPolyline polylines={capGridArray[0]} color={"Red"} clickable={false} weight={2}></MultiPolyline><MultiPolyline polylines={capGridArray[1]} color={"Red"} clickable={false} weight={2} opacity={0.2}></MultiPolyline></FeatureGroup>);
-            }
+            layers.push(<FeatureGroup ref="CAP" key={9999999}><MultiPolyline polylines={capGridArray[0]} color={"Red"} clickable={false} weight={2}></MultiPolyline><MultiPolyline polylines={capGridArray[1]} color={"Red"} clickable={false} weight={2} opacity={0.2}></MultiPolyline></FeatureGroup>);
         }
 
         if(this.state.rendered) {
@@ -182,8 +180,7 @@ class LiveMap extends React.Component {
                     }
                 }
             }.bind(this));
-
-            if(this.props.controls.visible_layers.indexOf("CAP") > -1) {
+            if(this.props.controls.visible_layers.indexOf("CAP") > -1 && this.state.renderGrid) {
                 var leaf = this.refs.map.getLeafletElement();
                 var layer = this.refs["CAP"].getLeafletElement();
                 if(!leaf.hasLayer(layer)) {
