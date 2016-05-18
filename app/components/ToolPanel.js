@@ -38,6 +38,8 @@ class BaseTool extends React.Component{
 	}
 
     select() {
+       // console.log(this.props.tool);
+       // console.log(toolList);
         this.props.selectTool(this.props.tool);
     }
 

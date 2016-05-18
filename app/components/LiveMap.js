@@ -15,7 +15,9 @@ class LiveMap extends React.Component {
     componentWillMount() {
         this.setState({
             rendered: false,
-            coordList:[]
+            coordList:[],
+            renderGrid: true,
+            renderGridNumbers: true
         });
         this.buildCapGrid();
     }
@@ -91,9 +93,24 @@ class LiveMap extends React.Component {
         }
     }
 
+   handleZoom(e){
+      if(e.target._zoom <=6){
+         this.setState({renderGrid: false});
+      } else {
+         this.setState({renderGrid: true});
+      }
+
+      if(e.target._zoom >= 10){
+         this.setState({renderGridNumbers: true});
+      } else {
+         this.setState({renderGridNumbers: false});
+      }
+   }
+
     render() {
         const position = [48.73205, -122.48627];
         const bounds = [ [-120,-220], [120,220] ];
+//        console.log(this.props);
 
         var layerGroups={};
 
@@ -143,8 +160,9 @@ class LiveMap extends React.Component {
             layers = Object.keys(this.props.data.layers).map(function(layer_id) {
                 return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{layerGroups[layer_id]}</FeatureGroup>;
             }.bind(this));
-
-            layers.push(<FeatureGroup ref="CAP" key={9999999}><MultiPolyline polylines={capGridArray[0]} color={"Red"} clickable={false} weight={2}></MultiPolyline><MultiPolyline polylines={capGridArray[1]} color={"Red"} clickable={false} weight={2} opacity={0.2}></MultiPolyline></FeatureGroup>);
+            if(this.state.renderGrid){
+               layers.push(<FeatureGroup ref="CAP" key={9999999}><MultiPolyline polylines={capGridArray[0]} color={"Red"} clickable={false} weight={2}></MultiPolyline><MultiPolyline polylines={capGridArray[1]} color={"Red"} clickable={false} weight={2} opacity={0.2}></MultiPolyline></FeatureGroup>);
+            }
         }
 
         if(this.state.rendered) {
@@ -181,7 +199,7 @@ class LiveMap extends React.Component {
         }
 
         return (
-            <Map center={position} worldCopyJump={false} zoom={this.props.controls.mapData.maxZoom} minZoom={2} maxBounds={bounds} zoomControl={false} onClick={this.onMapClick.bind(this)} ref='map'>
+            <Map center={position} worldCopyJump={false} zoom={this.props.controls.mapData.maxZoom} minZoom={2} maxBounds={bounds} zoomControl={false} onClick={this.onMapClick.bind(this)} onZoomend={this.handleZoom.bind(this)} ref='map'>
                 <TileLayer
                     maxZoom={18}
                     url='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
