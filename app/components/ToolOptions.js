@@ -34,6 +34,12 @@ class Slider extends React.Component {
             range: this.props.defaultValue
         });
         this.updateRange = this.updateRange.bind(this);
+      if(this.props.toMeter === true){
+         store.dispatch(updateToolProperties({[this.props.propKey]: (mileToMeter(this.props.defaultValue) / 2)}));
+      } else {
+         store.dispatch(updateToolProperties({[this.props.propKey]: this.props.defaultValue}));
+      }
+
     }
 
     //send converted number to the tool controls
@@ -72,6 +78,10 @@ class Dropdown extends React.Component {
         super(props);
     }
 
+    componentWillMount(){
+        store.dispatch(updateToolProperties({[this.props.propKey]: this.props.defaultValue}));
+    }
+
     updateColor(color) {
         store.dispatch(updateToolProperties({[this.props.propKey]: color.target.value}));
     }
@@ -100,6 +110,10 @@ class ToggleBox extends React.Component {
       super(props);
    }
 
+   componentWillMount(){
+      store.dispatch(updateToolProperties({[this.props.propKey]:this.props.defaultValue }));
+   }
+
    updateFlag(boolVal){
       store.dispatch(updateToolProperties({[this.props.propKey]:boolVal.target.checked }));
    }
@@ -121,6 +135,10 @@ class TextInput extends React.Component{
 
    constructor(props){
       super(props);
+   }
+
+   componentWillMount(){
+      store.dispatch(updateToolProperties({[this.props.propKey]:this.props.defaultValue}));
    }
 
    updateText(e){
@@ -188,12 +206,12 @@ const Circle = {
         strokeWidth: 5
     },
     options: [
-        <Slider title={"Diameter"} min={0.5} max={20} step={0.5} defaultValue={2} propKey={"radius"} toMeter={true} key={1} />,
-        <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} key={2} />,
-        <ToggleBox title={"Apply Fill"} propKey={"fill"} key={3} />,
-        <Dropdown title={"FillColor"} colors={colorDefinitions} propKey={"fillColor"} key={4} />,
-        <ToggleBox title={"Apply Stroke"} propKey={"stroke"} key={5} />,
-        <Slider title={"Stroke Pixels"} min={1} max={25} step={1} defaultValue={5} propKey={"strokeWidth"} toMeter={false} key={6} />
+        <Slider title={"Diameter in Miles"} min={0.5} max={20} step={0.5} defaultValue={2} propKey={"radius"} toMeter={true} key={1} />,
+        <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} defaultValue={"blue"} key={2} />,
+        <ToggleBox title={"Apply Fill"} propKey={"fill"} defaultValue={true} key={3} />,
+        <Dropdown title={"Fill Color"} colors={colorDefinitions} propKey={"fillColor"} defaultValue={"blue"} key={4} />,
+        <ToggleBox title={"Apply Stroke"} propKey={"stroke"} defaultValue={true} key={5} />,
+        <Slider title={"Stroke in Pixels"} min={1} max={25} step={1} defaultValue={5} propKey={"strokeWidth"} toMeter={false} key={6} />
     ],
     glyph: "glyphicon-record",
     description: "A circle with diameter in miles and drawn in the given color."
@@ -209,9 +227,9 @@ const Note = {
       text: ""
    },
    options: [
-      <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} key={1}/>,
-      <Dropdown title={"Icon"} colors={iconToolDefs} propKey={"icon"} key={2}/>,
-      <TextInput title={"Text"}  propKey={"text"} key={3}/>
+      <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} defaultValue={"blue"} key={1}/>,
+      <Dropdown title={"Icon"} colors={iconToolDefs} propKey={"icon"} defaultValue={"glyphicon-comment"} key={2}/>,
+      <TextInput title={"Text"}  propKey={"text"} defaultValue={""} key={3}/>
    ],
    glyph: "glyphicon-pushpin",
    description: "A tool to place icons on the map with on click text notes"
@@ -226,8 +244,8 @@ const Line = {
       strokeWidth: 5
    },
    options: [
-      <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} key={1} />,
-      <Slider title={"Line Thickness"} min={1} max={25} step={1} defaultvalue={5} propKey={"strokeWidth"} key={2} />
+      <Dropdown title={"Color"} colors={colorDefinitions} propKey={"color"} defaultValue={"blue"} key={1} />,
+      <Slider title={"Line Thickness in Pixels"} min={1} max={25} step={1} defaultValue={5} propKey={"strokeWidth"} key={2} />
    ],
    glyph: "glyphicon-pencil",
    description: "A tool to draw lines"
@@ -244,11 +262,11 @@ const Rectangle = {
       strokeWidth: 5
    },
    options: [
-      <Dropdown title={"Stroke Color"} colors={colorDefinitions} propKey={"color"} key={1} />,
-      <ToggleBox title={"Apply Fill"} propKey={"fill"} key={2} />,
-      <Dropdown title={"Fill Color"} colors={colorDefinitions} propKey={"fillColor"} key={3} />,
-      <ToggleBox title={"Apply Stroke"} propKey={"stroke"} key={4} />,
-      <Slider title={"Stroke Width"} min={1} max={25} step={1} defaultValue={5} propKey={"strokeWidth"} key={5} />
+      <Dropdown title={"Stroke Color"} colors={colorDefinitions} propKey={"color"} defaultValue={"blue"} key={1} />,
+      <ToggleBox title={"Apply Fill"} propKey={"fill"} defaultValue={true} key={2} />,
+      <Dropdown title={"Fill Color"} colors={colorDefinitions} propKey={"fillColor"} defaultValue={"blue"} key={3} />,
+      <ToggleBox title={"Apply Stroke"} propKey={"stroke"} defaultValue={true} key={4} />,
+      <Slider title={"Stroke in Pixels"} min={1} max={25} step={1} defaultValue={5} propKey={"strokeWidth"} key={5} />
    ],
    glyph:"glyphicon-unchecked",
    description: "Click on two locations to draw a rectangle"
