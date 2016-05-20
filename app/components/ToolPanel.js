@@ -20,10 +20,14 @@ class ToolPanel extends React.Component {
         }.bind(this));
 
         return(
-			<div id="tool_panel">
+			<Grid id="tool_panel">
+                <Row>
                 { this.props.controls.tool.options }
+                </Row>
+            <Row>
 				{ toolsList }
-			</div>
+            </Row>
+         </Grid>
 		);
 	}
 }
