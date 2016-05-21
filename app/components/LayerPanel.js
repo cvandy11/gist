@@ -187,8 +187,10 @@ class CapGridToggle extends React.Component {
 
     render() {
         return <div>
-            <input defaultChecked type="checkbox" onClick={this.toggle} />
-            <span style={{color:"white"}}>Cap Grid</span>
+           {/* <input defaultChecked type="checkbox" onClick={this.toggle} />*/}
+            <Button onClick={this.toggle} bsStyle="default" block>
+            Cap Grid
+            </Button>
         </div>
     }
 }

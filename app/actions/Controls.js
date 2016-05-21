@@ -21,6 +21,7 @@ function selectLayer(layer_id) {
 }
 
 function selectTool(tool) {
+//   console.log(tool);
     return({
         type: TOOL_SELECTED,
         tool: tool

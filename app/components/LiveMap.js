@@ -15,7 +15,9 @@ class LiveMap extends React.Component {
     componentWillMount() {
         this.setState({
             rendered: false,
-            coordList:[]
+            coordList:[],
+            renderGrid: true,
+            renderGridNumbers: true
         });
         this.buildCapGrid();
     }
@@ -41,6 +43,22 @@ class LiveMap extends React.Component {
       var numRow = 18;
       var lineArray=[];
       var quadArray=[];
+      var labelArray =[];
+      //Make labels
+      var curLabel = 1;
+      for(var i = 1; i <=numRow; i++){
+         for(var j = 1; j <=numCol; j++){
+            var lat = startLatlng[0]-(0.25*(i-1))-0.125;
+            var long = startLatlng[1]+(0.25*(j-1))+0.125;
+            var htmlString = '<span class="map-divicons" style="color:red;font-size:16pt">'+curLabel+'</span>';
+            var myIcon = L.divIcon({
+               html: htmlString
+
+           });
+           labelArray.push(<Marker key={curLabel} position={[lat,long]}  clickable={false} opacity={1} icon={myIcon}></Marker>);
+           curLabel++;
+         }
+      }
       //do rows.
       for (var i = 0; i <= numRow; i++){
          var pushObject = [[startLatlng[0]-(0.25*i),startLatlng[1]],[startLatlng[0]-(0.25*i),startLatlng[1]+(numCol*0.25)]];
@@ -59,7 +77,8 @@ class LiveMap extends React.Component {
          }
          lineArray.push(pushObject);
       }
-      this.setState({CapGrid: [lineArray, quadArray]});
+      var labelGroup = <FeatureGroup key={9999997}>{labelArray}</FeatureGroup>;
+      this.setState({CapGrid: [lineArray, quadArray, labelGroup]});
    }
 
     //fired whenever there is a click event on the map
@@ -91,9 +110,24 @@ class LiveMap extends React.Component {
         }
     }
 
+   handleZoom(e){
+      if(e.target._zoom <=6){
+         this.setState({renderGrid: false});
+      } else {
+         this.setState({renderGrid: true});
+      }
+
+      if(e.target._zoom >= 8){
+         this.setState({renderGridNumbers: true});
+      } else {
+         this.setState({renderGridNumbers: false});
+      }
+   }
+
     render() {
         const position = [48.73205, -122.48627];
         const bounds = [ [-120,-220], [120,220] ];
+//        console.log(this.props);
 
         var layerGroups={};
 
@@ -143,8 +177,11 @@ class LiveMap extends React.Component {
             layers = Object.keys(this.props.data.layers).map(function(layer_id) {
                 return <FeatureGroup ref={"layer-" + layer_id} key={layer_id}>{layerGroups[layer_id]}</FeatureGroup>;
             }.bind(this));
-
-            layers.push(<FeatureGroup ref="CAP" key={9999999}><MultiPolyline polylines={capGridArray[0]} color={"Red"} clickable={false} weight={2}></MultiPolyline><MultiPolyline polylines={capGridArray[1]} color={"Red"} clickable={false} weight={2} opacity={0.2}></MultiPolyline></FeatureGroup>);
+            layers.push(<FeatureGroup ref="CAP" key={9999999}>
+               <MultiPolyline polylines={capGridArray[0]} color={"Red"} clickable={false} weight={2}></MultiPolyline>
+               <MultiPolyline polylines={capGridArray[1]} color={"Red"} clickable={false} weight={2} opacity={0.2}></MultiPolyline>
+               {this.state.renderGridNumbers? capGridArray[2]:null}
+            </FeatureGroup>);
         }
 
         if(this.state.rendered) {
@@ -164,8 +201,7 @@ class LiveMap extends React.Component {
                     }
                 }
             }.bind(this));
-
-            if(this.props.controls.visible_layers.indexOf("CAP") > -1) {
+            if(this.props.controls.visible_layers.indexOf("CAP") > -1 && this.state.renderGrid) {
                 var leaf = this.refs.map.getLeafletElement();
                 var layer = this.refs["CAP"].getLeafletElement();
                 if(!leaf.hasLayer(layer)) {
@@ -181,7 +217,7 @@ class LiveMap extends React.Component {
         }
 
         return (
-            <Map center={position} worldCopyJump={false} zoom={this.props.controls.mapData.maxZoom} minZoom={2} maxBounds={bounds} zoomControl={false} onClick={this.onMapClick.bind(this)} ref='map'>
+            <Map center={position} worldCopyJump={false} zoom={this.props.controls.mapData.maxZoom} minZoom={2} maxBounds={bounds} zoomControl={false} onClick={this.onMapClick.bind(this)} onZoomend={this.handleZoom.bind(this)} ref='map'>
                 <TileLayer
                     maxZoom={18}
                     url='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
