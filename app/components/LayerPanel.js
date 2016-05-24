@@ -17,13 +17,21 @@ class LayerPanel extends React.Component {
             return null
         }
 		return (
-            <div className="layer_panel">
-                <Info mission_id={this.props.data.mission_info.mission_id} mission_description={this.props.data.mission_info.mission_description} center={this.props.data.mission_info.center} />
-                <Button bsStyle="default" onClick={this.props.createLayer} block>Create Layer</Button>
-                <Layers layers={this.props.data.layers} missionId={this.props.data.mission_info.mission_id} selectLayer={this.props.selectLayer} toggleLayer={this.props.toggleLayer} getLayerObjects={this.props.getLayerObjects} defaultLayer={this.props.data.default_layer} removeLayer={this.props.deleteLayer} />
-                <CapGridToggle toggleLayer={this.props.toggleLayer} />
-                <BaseLayer changeBase={this.props.changeBase} />
-            </div>
+            <Grid id="layer_panel">
+                <Row>
+                    <Info mission_id={this.props.data.mission_info.mission_id} mission_description={this.props.data.mission_info.mission_description} center={this.props.data.mission_info.center} />
+                </Row>
+                <Row>
+                    <Button bsStyle="success" onClick={this.props.createLayer} block>Create Layer</Button>
+                    <Layers layers={this.props.data.layers} missionId={this.props.data.mission_info.mission_id} selectLayer={this.props.selectLayer} toggleLayer={this.props.toggleLayer} getLayerObjects={this.props.getLayerObjects} defaultLayer={this.props.data.default_layer} removeLayer={this.props.deleteLayer} />
+                </Row>
+                <Row>
+                    <CapGridToggle toggleLayer={this.props.toggleLayer} />
+                </Row>
+                <Row>
+                    <BaseLayer changeBase={this.props.changeBase} />
+                </Row>
+            </Grid>
 		)
 	}
 }
@@ -36,9 +44,8 @@ class Info extends React.Component {
 	render() {
 		return 	<div className="info">
 				<p><span id="info_id">{this.props.mission_id}</span><br />
-				<span id="info_description">{this.props.mission_description}</span><br />
-				<Button bsStyle="primary" bsSize="xsmall">{this.props.center.lat}, {this.props.center.lng}</Button></p>
-			</div>
+				<span id="info_description">{this.props.mission_description}</span><br /></p>
+			    </div>
 	}
 }
 
@@ -165,7 +172,7 @@ class Layers extends React.Component {
 					data-id={ i } key={ i }
 					bsStyle={style} active={active}>
                             <Button className="layer-visible-button" bsSize="xsmall" onClick={this.toggleLayerVisibility(layer_id).bind(this)}><Glyphicon glyph={glyphicon} /></Button>
-                            <span className="active-layer-clickable" onClick={this.toggleLayerActive(layer_id).bind(this)}> {layer.layer_name}</span>
+                            <span className="active-layer-clickable" onClick={this.toggleLayerActive(layer_id).bind(this)}>{layer.layer_name}</span>
                             <Button className="layer-delete-button" bsSize="xsmall" onClick={this.deleteLayer(layer_id).bind(this)}><Glyphicon glyph="glyphicon glyphicon-remove" /></Button>
 				</ListGroupItem>
 			);

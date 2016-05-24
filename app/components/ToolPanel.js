@@ -61,8 +61,7 @@ class BaseTool extends React.Component{
 					    <strong>{tool.description}</strong>
 				    </Popover>}>
 				<Button bsStyle={bsStyle} onClick={this.select}>
-					<Glyphicon glyph={"glyphicon " + tool.glyph} />
-                    {tool.type}
+					<Glyphicon glyph={"glyphicon " + tool.glyph} /> {tool.type}
 				 </Button>
 			</OverlayTrigger>
 		);

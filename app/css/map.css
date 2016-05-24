@@ -11,3 +11,19 @@
 div.leaflet-bottom.leaflet-right {
     right: 200px;
 }
+
+.leaflet-div-icon {
+    background: transparent;
+    border: none;
+}
+
+.leaflet-div-icon > span {
+    position: relative;
+    left: -12px;
+    top: -6px;
+    text-shadow:
+        -1px -1px 0 #000,
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
+}
