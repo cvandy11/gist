@@ -1,5 +1,23 @@
 /* layer panel styling */
 
+#layer_panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding-top: 20px;
+    width: 190px;
+}
+
+#layer_panel > .row:nth-last-child(2) {
+    position: absolute;
+    bottom: 45px;
+}
+#layer_panel > .row:last-child {
+    position: absolute;
+    bottom: 5px;
+}
+
+
 .info {
     border-bottom: 1px solid gray;
 }
@@ -11,23 +29,21 @@
 #info_id {
     font-size: 28px;
 }
-#info_description { }
-#info_center { }
 
-#layers { }
-.list-group-item { }
-.layer-visible-button { float: left; }
-.layer-delete-button { float: right; }
+.layer-visible-button {
+    display: inline-block;
+    vertical-align: middle;
+}
+.layer-delete-button {
+    display: inline-block;
+    vertical-align: middle;
+}
 .active-layer-clickable {
     display: inline-block;
+    width: 110px;
     overflow: hidden;
-}
-
-#baseLayers {
-    position: absolute;
-    bottom: 0;
+    padding: 0 5px 0 5px;
+    vertical-align: middle;
 }
 
 .hidden { display: none; }
-.visible { }
-

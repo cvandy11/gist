@@ -50,7 +50,7 @@ class LiveMap extends React.Component {
          for(var j = 1; j <=numCol; j++){
             var lat = startLatlng[0]-(0.25*(i-1))-0.125;
             var long = startLatlng[1]+(0.25*(j-1))+0.125;
-            var htmlString = '<span class="map-divicons" style="color:red;font-size:16pt">'+curLabel+'</span>';
+            var htmlString = '<span class="map-divicons" style="color:red;font-size:20pt">'+curLabel+'</span>';
             var myIcon = L.divIcon({
                html: htmlString
 
@@ -117,7 +117,7 @@ class LiveMap extends React.Component {
          this.setState({renderGrid: true});
       }
 
-      if(e.target._zoom >= 8){
+      if(e.target._zoom >= 9){
          this.setState({renderGridNumbers: true});
       } else {
          this.setState({renderGridNumbers: false});

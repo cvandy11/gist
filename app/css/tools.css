@@ -2,10 +2,15 @@
 
 #tool_panel {
     position: absolute;
+    top: 0;
     bottom: 0;
-    width: 100%;
+    padding-top: 20px;
+    width: 190px;
 }
 #tool_panel button {
     width: 190px;
-    margin: 0 0 5px 0;
+}
+#tool_panel > .row:last-child {
+    position: absolute;
+    bottom: 5px;
 }
