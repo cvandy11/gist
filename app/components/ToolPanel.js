@@ -45,6 +45,13 @@ class BaseTool extends React.Component{
        // console.log(this.props.tool);
        // console.log(toolList);
         this.props.selectTool(this.props.tool);
+
+        if (this.props.tool.type != "Done") {
+            document.getElementById("map1").classList.remove("map_grab");
+        }
+        else {
+            document.getElementById("map1").classList.add("map_grab");
+        }
     }
 
 	render(){

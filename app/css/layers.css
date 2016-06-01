@@ -8,6 +8,11 @@
     width: 190px;
 }
 
+
+#layer_panel > .row {
+    width: 190px;
+}
+
 #layer_panel > .row:nth-last-child(2) {
     position: absolute;
     bottom: 45px;
@@ -44,6 +49,9 @@
     overflow: hidden;
     padding: 0 5px 0 5px;
     vertical-align: middle;
+}
+span.active-layer-clickable:hover {
+    cursor: pointer;
 }
 
 .hidden { display: none; }
